@@ -1,0 +1,36 @@
+{"id":"m16","part":2,"order":16,"title":"RTP und RTCP","pages":"S. 28–34","icon":"waveform.and.mic","goal":"Du kennst die Funktionen von RTP und RTCP, den RTP-Header, Audio-Sampling sowie den Unterschied zwischen Mixer und Translator.",
+"sections":[
+{"id":"m16s1","title":"Überblick und Audio Sampling","blocks":[
+{"t":"p","x":"RTP (Real-Time Transport Protocol) bietet Ende-zu-Ende-Funktionen für Echtzeitdaten wie Sprache, Video oder Simulationsdaten über Multicast- oder Unicast-Dienste. Es enthält **keine Ressourcenreservierung und kein QoS**. Ergänzt wird es durch **RTCP** zur Überwachung. Es ist unabhängig von den Transport- und Netzwerkschichten. IETF RFC 1889, ersetzt durch RFC 3550 im Jahr 2003."},
+{"t":"sl","part":2,"page":30,"x":"Sample 12,5 ms: 64 kBit gegen 16 kBit, mit Qualitätsverlust"},
+{"t":"k","x":"**Rechenbeispiel:** 64 kBit/s · 12,5 ms = 800 Bit = **100 Bytes** pro Sample. Bei 16 kBit/s sind es **25 Bytes** – aber mit Qualitätsverlust."}]},
+{"id":"m16s2","title":"RTP-Funktionen und Header","blocks":[
+{"t":"tb","head":["Funktion","Zweck"],"rows":[["Sequenznummerierung","Erkennung von Paketverlusten und Reihenfolge"],["Identifizierung des Nutzdatentyps","verschiedene Arten von Medienströmen"],["Zeitstempel","Berechnung der Verzögerung und der Verzögerungsvarianz"],["Zustellungsüberwachung","Erkennung von Übertragungsqualität und -geschwindigkeit"]]},
+{"t":"k","x":"RTP stellt **nicht** die rechtzeitige Zustellung sicher. Das unterliegende Protokoll ist nicht definiert, normalerweise wird **UDP** verwendet."},
+{"t":"frame","title":"RTP-Header: Tippe auf die Felder","frames":[
+{"segs":[{"t":"V","w":2,"c":"blue","d":"Version, 2 Bit."},{"t":"P","w":1,"c":"blue","d":"Padding, 1 Bit."},{"t":"X","w":1,"c":"blue","d":"Extension, 1 Bit."},{"t":"CC","w":4,"c":"blue","d":"CSRC Count, 4 Bit."},{"t":"M","w":1,"c":"orange","d":"Marker, 1 Bit."},{"t":"Payload Type","w":7,"c":"orange","d":"7 Bit: Format des RTP-Inhalts."}]},
+{"segs":[{"t":"Sequence Number","w":16,"c":"teal","d":"Erkennung von Verlusten und Reihenfolge."}]},
+{"segs":[{"t":"Timestamp","w":16,"c":"teal","d":"32 Bit."}]},
+{"segs":[{"t":"SSRC","w":16,"c":"violet","d":"Synchronization Source, 32 Bit: Zufallszahl zur Identifizierung der Datenquelle."}]},
+{"segs":[{"t":"CSRC List (optional)","w":16,"c":"violet","d":"0 bis 15 Felder à 32 Bit: Identifizierer der beitragenden Datenquellen."}]},
+{"segs":[{"t":"Header Extension (optional)","w":16,"c":"gray"}]}]}]},
+{"id":"m16s3","title":"RTCP","blocks":[
+{"t":"p","x":"RTCP überträgt regelmäßig Kontrollpakete an alle Teilnehmer der Sitzung: gleiche Ziele wie die Daten, aber **andere Port-Nummer**. Es liefert Rückmeldung über die Qualität und einen persistenten Identifizierer auf Transportebene."},
+{"t":"tb","head":["Paketart","Inhalt"],"rows":[["Sender Report","Sende- und Empfangsstatistiken aktiver Sender"],["Receiver Report","Empfangsstatistiken von Teilnehmern, die keine aktiven Sender sind"],["Source Description","Name der Quelle, Mail-ID, Kontaktnummer oder Quellcontroller"]]}]},
+{"id":"m16s4","title":"Mixer und Translator","blocks":[
+{"t":"net","title":"Mixer","nodes":[{"id":"S1","l":"Quelle 1","x":0,"y":0.1,"s":"host"},{"id":"S2","l":"Quelle 2","x":0,"y":0.9,"s":"host"},{"id":"M","l":"Mixer","x":0.5,"y":0.5,"s":"router"},{"id":"Z","l":"Ziel","x":1,"y":0.5,"s":"host"}],"edges":[{"a":"S1","b":"M"},{"a":"S2","b":"M"},{"a":"M","b":"Z"}],"steps":[
+{"x":"Der Mixer empfängt Ströme von einer oder mehreren Quellen und ändert möglicherweise das Datenformat (Codierung, Kompression).","hn":["M"],"p":[{"a":"S1","b":"M","l":"SSRC 1"},{"a":"S2","b":"M","l":"SSRC 2","c":"violet"}]},
+{"x":"Er kombiniert die Ströme und setzt eine **neue SSRC**, da er eine neue Synchronisationsquelle ist. Die alten SSRCs wandern in die **CSRC-Liste**.","hn":["Z"],"p":[{"a":"M","b":"Z","l":"neue SSRC, CSRC: 1, 2"}]}]},
+{"t":"tb","head":["","Mixer","Translator"],"rows":[["Ströme","kombiniert sie","leitet RTP-Pakete weiter"],["SSRC","setzt eine neue","keine Änderung"],["Beispiel","Konferenz, Formatwechsel","Tunneln mehrerer Streams durch eine Firewall"]]}]}],
+"calcs":["calc.rtp"],
+"questions":[
+{"id":"m16q1","k":"num","lvl":2,"pts":2,"q":"Wie viele Bytes Nutzdaten entstehen bei 64 kBit/s pro Sample von 12,5 ms?","num":100,"tol":0.01,"unit":"Bytes","steps":["64.000 Bit/s · 0,0125 s = 800 Bit","800 / 8 = **100 Bytes**"],"ref":"T2 S.30"},
+{"id":"m16q2","k":"mc","lvl":2,"pts":2,"q":"Was macht ein Mixer mit der SSRC?","o":["Er setzt eine neue SSRC, die alten wandern in die CSRC-Liste.","Er lässt sie unverändert.","Er löscht alle SSRCs ersatzlos.","Er setzt sie auf den Timestamp."],"a":[0],"ref":"T2 S.34"},
+{"id":"m16q3","k":"tf","lvl":2,"pts":4,"q":"Bewerten Sie die Aussagen zu RTP.","st":[{"s":"RTP enthält keine Ressourcenreservierung und kein QoS.","v":true},{"s":"RTP stellt die rechtzeitige Zustellung sicher.","v":false},{"s":"RTP wird normalerweise über UDP verwendet.","v":true},{"s":"RTP unterstützt Multicast und Unicast.","v":true}],"ref":"T2 S.29-31"},
+{"id":"m16q4","k":"match","lvl":2,"pts":3,"q":"Ordnen Sie das RTP-Feld seinem Zweck zu.","pairs":[["Sequence Number","Paketverluste und Reihenfolge erkennen"],["Timestamp","Verzögerung und Jitter berechnen"],["Payload Type","Format des Inhalts angeben"]],"ref":"T2 S.31-32"},
+{"id":"m16q5","k":"open","lvl":2,"pts":3,"q":"Beschreiben Sie die drei RTCP-Paketarten.","model":["Sender Report: Sende- und Empfangsstatistiken aktiver Sender","Receiver Report: Empfangsstatistiken von Teilnehmern, die nicht aktiv senden","Source Description: Informationen wie Name der Quelle, Mail-ID oder Kontaktnummer"],"ref":"T2 S.33"},
+{"id":"m16q6","k":"num","lvl":2,"pts":2,"q":"Wie viele Bit hat das Payload-Type-Feld im RTP-Header?","num":7,"tol":0.01,"unit":"Bit","steps":["Laut Folie: Payload Type, **7 Bit**"],"ref":"T2 S.32"},
+{"id":"m16q7","k":"mc","lvl":2,"pts":2,"q":"Wie unterscheidet sich RTCP von den RTP-Daten in der Adressierung?","o":["Gleiche Ziele, aber andere Port-Nummer","Andere Ziele, gleicher Port","Es läuft immer über TCP","Es wird nur an den Sender geschickt"],"a":[0],"ref":"T2 S.33"},
+{"id":"m16q8","k":"mc","lvl":2,"pts":2,"q":"Wofür wird ein Translator z. B. verwendet?","o":["Zum Tunneln mehrerer Streams durch eine Firewall","Zum Kombinieren mehrerer Ströme","Zum Vergeben neuer SSRCs","Zur Übersetzung von Domainnamen"],"a":[0],"ref":"T2 S.34"},
+{"id":"m16q9","k":"mc","lvl":3,"pts":2,"q":"Ein Codec wird von 64 auf 16 kBit/s umgestellt. Was folgt laut Skript?","o":["Weniger Daten, aber Qualitätsverlust","Mehr Daten, aber bessere Qualität","Keine Änderung der Datenmenge","Der Sample-Abstand verdoppelt sich"],"a":[0],"ref":"T2 S.30"},
+{"id":"m16q10","k":"open","lvl":3,"pts":4,"q":"RTP hat keine Garantien für rechtzeitige Zustellung. Welche Hilfen bietet es einer Medienanwendung trotzdem?","model":["Sequenznummern zeigen Paketverluste und falsche Reihenfolge","Zeitstempel erlauben die Berechnung von Verzögerung und Verzögerungsvarianz","Der Payload Type identifiziert den Nutzdatentyp","RTCP gibt Rückmeldung über die Qualität der Übertragung"],"ref":"T2 S.31-33"}]}

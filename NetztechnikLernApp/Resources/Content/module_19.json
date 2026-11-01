@@ -1,0 +1,60 @@
+{"id":"m19","part":2,"order":19,"title":"Digitale Netze im Automobil – Im Einzelnen","pages":"S. 66–80","icon":"car.side.fill","goal":"Du kannst LIN, CAN, FlexRay, Automotive Ethernet, SOME/IP und MOST vergleichen und ihre Frames und Einsatzgebiete erklären.",
+"sections":[
+{"id":"m19s1","title":"Überblick","blocks":[
+{"t":"sl","part":2,"page":67,"x":"Netzwerksysteme im Fahrzeug"},
+{"t":"tb","head":["System","Rate","Zugriff","Einsatz"],"rows":[["LIN","10 oder 20 kBit/s","Single Master, Multiple Slave","nicht sicherheitskritisch: Scheibenwischer, Sitzverstellung"],["CAN","10 kBit/s bis 1 MBit/s","Multi-Master, CSMA/CD","Komfort bis Motor und ABS"],["FlexRay","bis 10 Mbit/s","TDMA","sicherheitskritisch: Break-by-Wire, Steer-by-wire"],["MOST","24 MBit/s Streaming, 14,4 MBit/s Paket","TDM, Master-Slave","Infotainment"],["Automotive Ethernet","100 Mbit/s bis Multi-Gbit/s","Stern/Baum mit Switches","Backbone"]]}]},
+{"id":"m19s2","title":"LIN","blocks":[
+{"t":"b","i":["Seit 1998 von einem Konsortium entwickelt, kostengünstiger Subbus.","Definiert **Layer 1 und Layer 2**.","Basiert auf **UART**, einer sehr verbreiteten, kostengünstigen Schnittstelle.","**12V Ein-Draht-Bus** nach ISO 9141."]},
+{"t":"seq","title":"Master fragt, Slave antwortet","lifelines":["Master Task","Slave Task 1","Slave Task 2"],"msgs":[
+{"f":0,"to":1,"l":"Header","n":"Der Master sendet den Frame-Header über den Bus an **alle** Slaves.","c":"blue"},
+{"f":1,"to":0,"l":"Response","n":"Der Slave, der die Informationen bereitstellen kann, sendet die Response **direkt hinter dem Header**.","c":"green"},
+{"f":0,"to":2,"l":"Header","n":"Der nächste Header fordert eine andere Nachricht an.","c":"blue"},
+{"f":2,"to":0,"l":"Response","n":"Diesmal antwortet Slave 2.","c":"green"}]},
+{"t":"frame","title":"LIN-Frame","frames":[
+{"l":"Header","segs":[{"t":"Break","w":1,"c":"blue","d":"Erkennung des Headers."},{"t":"Sync","w":1,"c":"blue","d":"Synchronisation Master/Slave."},{"t":"Identifier","w":1,"c":"blue","d":"Identifizierung der geforderten Nachricht."}]},
+{"l":"Response","segs":[{"t":"Data","w":3,"c":"green","d":"Bis zu 8 Datenbytes."},{"t":"Checksum","w":1,"c":"orange","d":"Sicherstellung der Übertragung."}]}]},
+{"t":"sl","part":2,"page":70,"x":"LIN Physical Layer: Spannung zwischen 0 V und VBatt"}]},
+{"id":"m19s3","title":"CAN","blocks":[
+{"t":"b","i":["Standard **ISO 11898**, von Bosch für Kfz entwickelt, heute auch in der Automatisierungstechnik.","Definiert **Layer 1 und Layer 2**.","Echtzeitfähiger Bus für asynchrone Datenübertragung.","Seriell arbeitender **2-Draht-Bus** (verdrillt).","**Multi-Master** und Broadcast mit CSMA/CD."]},
+{"t":"tb","title":"CAN-Klassen","head":["Klasse","Rate","Anwendung"],"rows":[["CAN A","< 10 kBit/s","Diagnose (konventionell), Werkstatt"],["CAN B","< 125 kBit/s","Komfort, Display, Karosserie; fehlertolerant"],["CAN C","< 1 MBit/s","Motor, Getriebe, ESP, ASR, ABS; echtzeitfähig"]]},
+{"t":"p","x":"**Gateway-Module** koppeln Netze unterschiedlicher Geschwindigkeit, z. B. CAN C und CAN B oder CAN und LIN."},
+{"t":"frame","title":"CAN-Frame: Tippe auf die Felder","frames":[
+{"segs":[{"t":"SOF","w":1,"c":"gray","d":"Start-of-frame: Synchronisationsbit."},{"t":"Identifier","w":4,"c":"orange","d":"11 Bit: Art der Information, enthält auch die Priorität."},{"t":"Control","w":3,"c":"green","d":"RTR (0 bei Datenframes, 1 bei Remote Request), IDE (Standard oder Extended), Reserved, DLC (Anzahl der Datenbytes)."},{"t":"Data","w":6,"c":"violet","d":"Daten, 0 bis 8 Bytes."},{"t":"CRC","w":4,"c":"blue","d":"15 Bit Checksumme, Delimiter ist immer 1."},{"t":"ACK","w":1,"c":"yellow","d":"Empfänger quittiert das CRC-Ergebnis im ACK-Slot positiv oder negativ. Delimiter immer 1."},{"t":"EOF","w":2,"c":"red","d":"End-of-frame, 7 Bit, immer 1."}]}]},
+{"t":"k","x":"Bitzahl nach Folie: SOF 1 + ID 11 + RTR 1 + IDE 1 + Res. 1 + DLC 4 + CRC 15 + Delimiter 1 + ACK 1 + Delimiter 1 + EOF 7 = **44 Bit** plus Datenbits."},
+{"t":"x","viz":"can"},
+{"t":"p","x":"Jedes Modul hat einen **CAN-Controller** und einen **CAN-Transceiver**. Der Controller wandelt die Daten des Mikroprozessors (binär) um, der Transceiver wandelt sie in einen Spannungsbereich um und kann senden und empfangen. Die Ein- und Ausgänge eines Moduls können weiterhin analog sein."},
+{"t":"sl","part":2,"page":75,"x":"Spannungspegel auf der Originalfolie"}]},
+{"id":"m19s4","title":"FlexRay","blocks":[
+{"t":"b","i":["ISO-Standard 17458. Ursprünglich BMW, Daimler, Motorola und Philips.","**Deterministisches, fehlertolerantes** Hochgeschwindigkeitsbussystem: bis 10 Mbit/s, 2 Kanäle (redundant bei Bedarf).","Definiert Layer 1 und Layer 2.","**TDMA** mit dezentraler Taktsynchronisation.","Echtzeitfähig mit **garantierten Latenzzeiten**.","Stern- oder Bustopologie."]},
+{"t":"frame","title":"Kommunikationszyklus (Beispiel 2,5 ms)","frames":[
+{"segs":[{"t":"Static","w":4,"c":"green","d":"Kritische Steuergeräte haben einen festen Slot im Static-Teil."},{"t":"Dynamic","w":3,"c":"blue","d":"Für unregelmäßige Sendewünsche mit variabler Länge (weniger kritisch)."},{"t":"Symbol","w":2,"c":"violet","d":"Administration."},{"t":"NIT","w":1,"c":"gray","d":"Letzter Abschnitt des Zyklus auf der Folie."}]}]},
+{"t":"frame","title":"FlexRay-Frame: 5 + (0 … 254) + 3 Bytes","frames":[
+{"segs":[{"t":"Header (5 Bytes)","w":2,"c":"orange","d":"5 Indikator-Bits, Frame ID 11 Bit, Payload Length 7 Bit, Header CRC 11 Bit, Cycle Count 6 Bit."},{"t":"Payload (0 … 254 Bytes)","w":5,"c":"yellow","d":"Daten."},{"t":"Trailer (3 Bytes)","w":2,"c":"blue","d":"24 Bit CRC."}]}]}]},
+{"id":"m19s5","title":"Automotive Ethernet und SOME/IP","blocks":[
+{"t":"b","i":["Einfachere Kabel mit **einem verdrillten Adernpaar**: 100BASE-T1 (100 Mbit/s), 1000BASE-T1 (1 Gbit/s), 2.5/5/10GBASE-T1.","Fahrzeugtaugliche Stecker statt RJ45, geringere Reichweiten (15–40 m, „T1L“ bis 1000 m).","Temperatur **−40 °C bis +125 °C**, Vibrations- und EMV-Festigkeit, dicht gegen Flüssigkeiten.","Echtzeit durch **TSN**: Zeit-Synchronisation (PTP), Traffic-Shaping mit 8 Prioritäten, Scheduling in festen Zyklen.","Oft **hybride Zonen-Architektur**: Ethernet als Backbone, CAN/LIN am Rand.","Sleep/Wake für minimale Ruhestromaufnahme im Parkzustand."]},
+{"t":"tb","head":["","Klassische Busse (CAN, LIN, FlexRay)","SOME/IP"],"rows":[["Prinzip","signalorientiert","dienstorientiert (SOA)"],["Senden","Sender übertragen Signale zyklisch","nur bei Bedarf: Request/Response, Events mit Subscription"],["Bedingung","–","erst, wenn sich ein Empfänger angemeldet hat"]]},
+{"t":"p","x":"**SOME/IP** (Scalable service-Oriented MiddlewarE over IP) wurde von BMW entwickelt und in AUTOSAR standardisiert. Es liegt oberhalb von UDP bzw. TCP, also **ISO/OSI Layer 5–7**. Ergänzt wird es durch **SOME/IP-SD** (dynamische Service Discovery) und **SOME/IP-TP** (Segmentierung großer Pakete)."},
+{"t":"frame","title":"SOME/IP-Paket (32 Bit breit)","frames":[
+{"segs":[{"t":"Service ID","w":1,"c":"blue"},{"t":"Method/Event ID","w":1,"c":"blue"}]},
+{"segs":[{"t":"Length (in Byte)","w":1,"c":"teal"}]},
+{"segs":[{"t":"Client ID","w":1,"c":"violet"},{"t":"Session ID","w":1,"c":"violet"}]},
+{"segs":[{"t":"Prot. Version","w":1,"c":"orange"},{"t":"IF Version","w":1,"c":"orange"},{"t":"Msg. Type","w":1,"c":"orange"},{"t":"Return Code","w":1,"c":"orange"}]},
+{"segs":[{"t":"Payload","w":1,"c":"green"}]}]}]},
+{"id":"m19s6","title":"MOST","blocks":[
+{"t":"b","i":["Serielles Bussystem für Audio, Video, Sprache und Daten.","Standardisierung durch die **MOST Cooperation**.","Verwendet **Lichtwellenleiter**.","24 MBit/s Streaming für Multimedia, 14,4 MBit/s Paketdaten, Steuerkanal bis 700 kBit/s.","Definiert **alle 7 Layer** des ISO/OSI-Modells.","TDM, Master-Slave, **Ring-Topologie**, Hot-Plug-fähig.","Anwendungen: Infotainment, pufferloses Streaming von MPEG2-Video und CD-Audio."]}]}],
+"questions":[
+{"id":"m19q1","k":"match","lvl":2,"pts":4,"q":"Ordnen Sie dem Bussystem das Zugriffsverfahren zu.","pairs":[["LIN","Single Master, Multiple Slave"],["CAN","Multi-Master mit CSMA/CD"],["FlexRay","TDMA"],["MOST","TDM im Ring"]],"ref":"T2 S.68-80"},
+{"id":"m19q2","k":"num","lvl":3,"pts":4,"q":"Wie viele Bit hat ein CAN-Datenframe mit 8 Datenbytes laut Folie?","num":108,"tol":0.01,"unit":"Bit","steps":["SOF 1 + ID 11 + Control 7 = 19 Bit","CRC 15 + Delimiter 1 + ACK 1 + Delimiter 1 + EOF 7 = 25 Bit","Daten: 8 · 8 = 64 Bit","19 + 25 + 64 = **108 Bit**"],"ref":"T2 S.73"},
+{"id":"m19q3","k":"num","lvl":2,"pts":2,"q":"Wie groß ist die Differenzspannung auf dem CAN-Bus im dominanten Zustand?","num":2,"tol":0.01,"unit":"V","steps":["CAN High 3,5 V − CAN Low 1,5 V = **2 V**"],"ref":"T2 S.75"},
+{"id":"m19q4","k":"open","lvl":3,"pts":4,"q":"Erklären Sie, warum eine externe Spannungsspitze die CAN-Nachricht nicht verfälscht.","model":["Bei einer Störung werden CAN High und CAN Low in gleicher Weise beeinflusst","Die Differenzspannung bleibt bei 2 Volt","Dadurch bleibt die Integrität der Nachricht geschützt"],"ref":"T2 S.75"},
+{"id":"m19q5","k":"mc","lvl":2,"pts":2,"q":"Welcher Teil des CAN-Frames enthält auch die Priorität?","o":["Identifier","Data","CRC","End-of-frame"],"a":[0],"ref":"T2 S.73"},
+{"id":"m19q6","k":"match","lvl":2,"pts":3,"q":"Ordnen Sie die CAN-Klasse der Anwendung zu.","pairs":[["CAN A","Diagnose in der Werkstatt"],["CAN B","Komfort, Display, Karosserie"],["CAN C","Motor, Getriebe, ABS"]],"ref":"T2 S.72"},
+{"id":"m19q7","k":"tf","lvl":2,"pts":5,"q":"Bewerten Sie die Aussagen.","st":[{"s":"LIN ist ein 12V Ein-Draht-Bus.","v":true},{"s":"CAN ist ein 2-Draht-Bus.","v":true},{"s":"MOST verwendet Kupferdoppeladern.","v":false},{"s":"MOST definiert nur Layer 1 und 2.","v":false},{"s":"FlexRay bietet garantierte Latenzzeiten.","v":true}],"ref":"T2 S.68-80"},
+{"id":"m19q8","k":"open","lvl":3,"pts":4,"q":"Ein Hersteller plant Steer-by-wire, Sitzverstellung und Video-Infotainment. Wählen Sie jeweils ein Bussystem und begründen Sie.","model":["Steer-by-wire: FlexRay, sicherheitskritisch, deterministisch, fehlertolerant, garantierte Latenz","Sitzverstellung: LIN, nicht sicherheitskritisch und kostengünstig","Video-Infotainment: MOST, Audio/Video-Streaming (alternativ Ethernet)"],"ref":"T2 S.68-80"},
+{"id":"m19q9","k":"mc","lvl":2,"pts":2,"q":"Wofür sind die Slots im Static-Teil des FlexRay-Zyklus gedacht?","o":["Für kritische Steuergeräte mit festem Slot","Für unregelmäßige Sendewünsche","Für Administration","Für Video-Streams"],"a":[0],"ref":"T2 S.77"},
+{"id":"m19q10","k":"num","lvl":2,"pts":2,"q":"Wie groß kann ein FlexRay-Frame maximal werden?","num":262,"tol":0.01,"unit":"Bytes","steps":["5 + 254 + 3 = **262 Bytes**"],"ref":"T2 S.77"},
+{"id":"m19q11","k":"open","lvl":2,"pts":3,"q":"Worin unterscheidet sich die Kommunikation bei SOME/IP von klassischen Fahrzeugbussen?","model":["Klassische Busse sind signalorientiert, Sender übertragen Signale zyklisch","SOME/IP ist dienstorientiert, Kommunikation nur bei Bedarf (Request/Response, Events mit Subscription)","Daten werden erst gesendet, wenn sich ein Empfänger angemeldet hat"],"ref":"T2 S.79"},
+{"id":"m19q12","k":"ms","lvl":2,"pts":3,"q":"Welche Merkmale nennt das Skript für Automotive Ethernet?","o":["Einfachere Kabel mit einem verdrillten Adernpaar","Temperaturbereich −40 °C bis +125 °C","Echtzeitfähigkeit über TSN","Reichweite von mindestens 100 km"],"a":[0,1,2],"ref":"T2 S.78"},
+{"id":"m19q13","k":"mc","lvl":1,"pts":1,"q":"Auf welchen OSI-Schichten liegt SOME/IP?","o":["Layer 5–7","Layer 1–2","Layer 3","Layer 4"],"a":[0],"ref":"T2 S.79"},
+{"id":"m19q14","k":"mc","lvl":2,"pts":2,"q":"Was antwortet bei LIN auf den Header des Masters?","o":["Der Slave, der die geforderten Informationen bereitstellen kann","Alle Slaves gleichzeitig","Nur der erste Slave am Bus","Das Gateway"],"a":[0],"ref":"T2 S.69"},
+{"id":"m19q15","k":"num","lvl":3,"pts":3,"q":"Wie lange dauert das Senden eines CAN-Frames mit 108 Bit bei 1 MBit/s (in µs)?","num":108,"tol":0.1,"unit":"µs","steps":["108 Bit ÷ 1 MBit/s = **108 µs**"],"ref":"T2 S.71"}]}

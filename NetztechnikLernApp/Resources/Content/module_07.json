@@ -1,0 +1,36 @@
+{"id":"m07","part":1,"order":7,"title":"Internet Design Philosophie","pages":"S. 39–43","icon":"globe.europe.africa.fill","goal":"Du kennst die Designziele des Internets und kannst Fate Sharing und das Prinzip „Funktionalität an den Endpunkten“ erklären.",
+"sections":[
+{"id":"m07s1","title":"Die Ziele","blocks":[
+{"t":"p","x":"**Primäres Ziel:** „Develop an effective technique for multiplexed utilization of existing interconnected networks.“ (David Clark, 1988)"},
+{"t":"p","x":"**Sekundärziele** in der Reihenfolge ihrer Wichtigkeit:"},
+{"t":"frame","title":"Von wichtig (oben) nach weniger wichtig","frames":[
+{"segs":[{"t":"1 Kommunikation trotz Ausfall von Gateways","w":1,"c":"violet","d":"Internet communication must continue despite loss of gateways."}]},
+{"segs":[{"t":"2 Mehrere Kommunikationsdienste","w":1,"c":"violet","d":"Internet must support multiple types of communication services."}]},
+{"segs":[{"t":"3 Vielfalt von Netzen","w":1,"c":"blue","d":"Internet architecture must accommodate a variety of networks."}]},
+{"segs":[{"t":"4 Verteiltes Ressourcenmanagement","w":1,"c":"blue","d":"Must permit distributed management of resources."}]},
+{"segs":[{"t":"5 Kosteneffizienz","w":1,"c":"teal","d":"Internet architecture must be cost-effective."}]},
+{"segs":[{"t":"6 Einfacher Host-Anschluss","w":1,"c":"teal","d":"Host attachment must be possible with a low level of effort."}]},
+{"segs":[{"t":"7 Nachvollziehbare Ressourcen","w":1,"c":"green","d":"The resources used in the Internet architecture must be accountable."}]}]}]},
+{"id":"m07s2","title":"Kommunikation trotz Ausfällen","blocks":[
+{"t":"p","x":"Die Kommunikation muss weiter möglich sein, wenn Router, Verbindungen oder ganze Teilnetze ausfallen. Das Netz behandelt Fehler und behebt sie nach Möglichkeit intern."},
+{"t":"net","title":"Einziger sichtbarer Fehlerfall: Totalpartitionierung","nodes":[{"id":"A","l":"Anwendung A","x":0,"y":0.5,"s":"host"},{"id":"R1","l":"R1","x":0.33,"y":0.5,"s":"router"},{"id":"R2","l":"R2","x":0.66,"y":0,"s":"router"},{"id":"R3","l":"R3","x":0.66,"y":1,"s":"router"},{"id":"B","l":"Anwendung B","x":1,"y":0.5,"s":"host"}],"edges":[{"a":"A","b":"R1"},{"a":"R1","b":"R2"},{"a":"R1","b":"R3"},{"a":"R2","b":"B"},{"a":"R3","b":"B"}],"steps":[
+{"x":"Normalfall: Die Daten laufen über R2.","he":[["A","R1"],["R1","R2"],["R2","B"]],"p":[{"a":"R1","b":"R2"}]},
+{"x":"R2 fällt aus. Das Netz findet einen anderen Weg – die Anwendungen merken davon möglichst nichts.","dn":["R2"],"he":[["A","R1"],["R1","R3"],["R3","B"]],"p":[{"a":"R1","b":"R3"}]},
+{"x":"Fallen beide Wege aus, ist das Netz **total partitioniert**. Erst dieser Fehler ist für die Anwendungen sichtbar.","dn":["R2","R3"]}]},
+{"t":"k","x":"**Fate Sharing:** Nur die Endpunkte speichern den relevanten Status und die Daten. Fällt ein Endpunkt aus, spielt es keine Rolle mehr, dass der Zustand verloren geht."}]},
+{"id":"m07s3","title":"Ein einfaches, „dummes“ Netz","blocks":[
+{"t":"p","x":"**Funktionalität an den Endpunkten und nicht im Netz:** Das Netz bleibt einfach und „dumm“ und ist unabhängig von den Anwendungen. Anwendungen wissen nicht, wie das Netz funktioniert."},
+{"t":"b","i":["Das Netz kann **unabhängig von den Anwendungen** geändert werden.","Neue Anwendungen können **ohne Netzbeteiligung** eingeführt werden."]},
+{"t":"frame","title":"IP als gemeinsame Taille","frames":[
+{"segs":[{"t":"Viele Anwendungen","w":1,"c":"green","d":"Application Layer."}]},
+{"segs":[{"t":"TCP","w":1,"c":"teal","d":"Transport Layer."},{"t":"UDP","w":1,"c":"teal","d":"Transport Layer."}]},
+{"segs":[{"t":"IP","w":1,"c":"blue","d":"Im Networking Layer wird **ausschließlich IP** verwendet."}]},
+{"segs":[{"t":"Viele Link-Protokolle","w":1,"c":"violet","d":"IP wird auf einer Vielzahl verschiedener Link-Protokolle implementiert."}]}]}]}],
+"questions":[
+{"id":"m07q1","k":"ord","lvl":2,"pts":3,"q":"Bringen Sie die ersten vier Sekundärziele in die richtige Reihenfolge ihrer Wichtigkeit.","seq":["Kommunikation trotz Ausfall von Gateways","Mehrere Arten von Kommunikationsdiensten","Vielfalt von Netzen","Verteiltes Ressourcenmanagement"],"ref":"T1 S.40"},
+{"id":"m07q2","k":"open","lvl":2,"pts":3,"q":"Erklären Sie das Konzept des Fate Sharing.","model":["Nur die Anwendungen (Endpunkte) speichern den relevanten Status und die Daten","Das Netz muss keinen Zustand halten","Fällt ein Endpunkt aus, spielt der Zustandsverlust keine Rolle mehr, weil der Teil der Anwendung ohnehin ausgefallen ist"],"ref":"T1 S.41"},
+{"id":"m07q3","k":"mc","lvl":1,"pts":1,"q":"Welcher Fehler ist laut Skript als einziger für Anwendungen sichtbar?","o":["Totalpartitionierung des Netzwerks","Ausfall eines Routers","Ausfall einer Leitung","Vorübergehende Fehler"],"a":[0],"ref":"T1 S.41"},
+{"id":"m07q4","k":"tf","lvl":2,"pts":4,"q":"Bewerten Sie die Aussagen.","st":[{"s":"Anwendungsfunktionalität liegt nur in den Endpunkten.","v":true},{"s":"Neue Anwendungen erfordern eine Beteiligung des Netzes.","v":false},{"s":"Im Networking Layer wird ausschließlich IP verwendet.","v":true},{"s":"Anwendungen müssen genau wissen, wie das Netz funktioniert.","v":false}],"ref":"T1 S.42-43"},
+{"id":"m07q5","k":"open","lvl":3,"pts":4,"q":"Warum konnten im Internet neue Anwendungen entstehen, ohne das Netz umzubauen? Argumentieren Sie mit der Designphilosophie.","model":["Funktionalität liegt an den Endpunkten, das Netz bleibt einfach und „dumm“","Das Netz ist unabhängig von den transportierten Anwendungen","Dadurch lassen sich neue Anwendungen ohne Netzwerkbeteiligung einführen und das Netz unabhängig ändern"],"ref":"T1 S.42"},
+{"id":"m07q6","k":"mc","lvl":1,"pts":1,"q":"Wie lautet sinngemäß das primäre Ziel des Internets nach David Clark?","o":["Effektive Technik zur multiplexen Nutzung bestehender, verbundener Netze","Maximale Verschlüsselung aller Daten","Ersatz aller Telefonnetze","Kostenlose Netznutzung"],"a":[0],"ref":"T1 S.40"},
+{"id":"m07q7","k":"mc","lvl":2,"pts":2,"q":"Wie wird die Vielfalt von Netzen unterstützt („accommodate a variety of networks“)?","o":["IP wird auf vielen verschiedenen Link-Protokollen implementiert.","Jedes Netz bekommt ein eigenes Vermittlungsprotokoll.","TCP ersetzt alle Link-Protokolle.","Nur Ethernet ist zugelassen."],"a":[0],"ref":"T1 S.43"}]}

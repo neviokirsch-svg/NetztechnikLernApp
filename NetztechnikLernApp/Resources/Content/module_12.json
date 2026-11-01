@@ -1,0 +1,27 @@
+{"id":"m12","part":1,"order":12,"title":"Mobile & Wireless","pages":"S. 109–115","icon":"wifi","goal":"Du kannst mobil und drahtlos unterscheiden, Besonderheiten gegenüber kabelgebundenen Netzen nennen und Technologien und Frequenzen einordnen.",
+"sections":[
+{"id":"m12s1","title":"Begriffe","blocks":[
+{"t":"tb","head":["Mobil","Drahtlos"],"rows":[["Nutzer kann Netzdienste in Bewegung nutzen","direkt zwischen zwei (festen) Benutzerknoten"],["Zugangspunkte können sich während der Nutzung ändern","oder zwischen Benutzerknoten und Zugangspunkt am Kabelnetz"],["zellulares Netz",""]]},
+{"t":"net","title":"Downlink und Uplink","nodes":[{"id":"B","l":"Netzzugangspunkt","x":0.1,"y":0.3,"s":"antenna"},{"id":"M","l":"Endgerät","x":0.9,"y":0.7,"s":"phone"}],"edges":[{"a":"B","b":"M"}],"steps":[
+{"x":"**Downlink:** Übertragungsrichtung vom Netzzugangspunkt zum Endgerät.","p":[{"a":"B","b":"M","l":"Downlink"}]},
+{"x":"**Uplink:** Übertragungsrichtung vom Endgerät zum Netzzugangspunkt.","p":[{"a":"M","b":"B","l":"Uplink","c":"green"}]}]}]},
+{"id":"m12s2","title":"Unterschiede zu kabelgebundenen Netzen","blocks":[
+{"t":"b","i":["Niedrigere Übertragungsraten","Höhere Verlustquoten","Höhere Verzögerungen und höhere Verzögerungsvarianz (Jitter)","Geringere Sicherheit: gemeinsames und ungebundenes Medium","Frequenzregulierung","Mobilität: Wechsel des Verbindungspunkts, wie findet man einen Benutzer?","Beschränkungen der Zugangsgeräte: Batteriekapazität"]}]},
+{"id":"m12s3","title":"Technologien","blocks":[
+{"t":"tb","title":"Mobile Technologien","head":["Gruppe","Technik","Einsatz"],"rows":[["Öffentlich","GSM (2G) – UMTS (3G) – LTE (4G) – 5G","in Europa entstanden, heute weltweit"],["Öffentlich","D-AMPS – CDMA2000","USA, Südkorea"],["PMR","Tetra (Terrestrial Trunked Radio)","„Blaulicht-Funk“, Flughäfen, Industrieanlagen"]]},
+{"t":"tb","title":"Wireless Technologien","head":["Technik","Beschreibung"],"rows":[["WLAN","Wireless Local Area Network"],["DECT","„Schnurlostelefon“"],["Nahbereich","Bluetooth, NFC (Near Field Communication)"],["Richtfunk","gerichtete Verbindung"],["Point-to-Multipoint","Funkzugangssysteme"]]}]},
+{"id":"m12s4","title":"Frequenzspektrum","blocks":[
+{"t":"bars","title":"Mobilfunk in Deutschland (GHz, obere Bandgrenze)","bars":[{"l":"GSM","v":1.8,"c":"teal"},{"l":"UMTS","v":2.1,"c":"blue"},{"l":"LTE","v":2.6,"c":"violet"},{"l":"5G","v":3.8,"c":"orange"},{"l":"5G mm wave","v":25.7,"c":"red"}],"unit":"GSM 900 MHz/1,8 GHz, UMTS 1,9/2,1 GHz, LTE 700 MHz/1,8–2,6 GHz, 5G 3,4–3,8 GHz, 5G Campus 3,8 GHz, mm wave 24,2–25,7 GHz"},
+{"t":"f","x":"λ = c / f","title":"Frequenz und Wellenlänge sind umgekehrt proportional; c = 300.000 km/s"},
+{"t":"p","x":"Der **Frequenzplan der Bundesnetzagentur** umfasst 712 Seiten mit ca. 2000 Einträgen."},
+{"t":"sl","part":1,"page":114,"x":"Frequenzspektrum auf der Originalfolie"}]}],
+"calcs":[],
+"questions":[
+{"id":"m12q1","k":"ms","lvl":2,"pts":3,"q":"Welche Unterschiede zu kabelgebundenen Netzen nennt das Skript?","o":["Höhere Verlustquoten","Niedrigere Übertragungsraten","Geringere Sicherheit","Niedrigere Verzögerungen"],"a":[0,1,2],"ref":"T1 S.111"},
+{"id":"m12q2","k":"mc","lvl":1,"pts":1,"q":"Welche Richtung beschreibt der Uplink?","o":["Vom Endgerät zum Netzzugangspunkt","Vom Netzzugangspunkt zum Endgerät","Zwischen zwei Basisstationen","Zwischen zwei Endgeräten"],"a":[0],"ref":"T1 S.110"},
+{"id":"m12q3","k":"match","lvl":1,"pts":4,"q":"Ordnen Sie Mobilfunkgeneration und Technik zu.","pairs":[["2G","GSM"],["3G","UMTS"],["4G","LTE"],["Blaulicht-Funk","Tetra"]],"ref":"T1 S.112"},
+{"id":"m12q4","k":"open","lvl":2,"pts":3,"q":"Grenzen Sie die Begriffe „mobil“ und „drahtlos“ gegeneinander ab.","model":["Mobil: Benutzer kann Dienste nutzen, während er sich bewegt","Mobil: Zugangspunkte können sich während der Nutzung ändern (zellulares Netz)","Drahtlos: direkt zwischen zwei festen Benutzerknoten oder zwischen Benutzerknoten und einem Zugangspunkt am Kabelnetz"],"ref":"T1 S.110"},
+{"id":"m12q5","k":"mc","lvl":2,"pts":2,"q":"Warum gilt ein Funkmedium laut Skript als weniger sicher?","o":["Es ist ein gemeinsames und ungebundenes Medium.","Es hat eine höhere Bitrate.","Es benötigt keine Frequenzen.","Es arbeitet ohne Protokolle."],"a":[0],"ref":"T1 S.111"},
+{"id":"m12q6","k":"tf","lvl":2,"pts":4,"q":"Bewerten Sie die Aussagen.","st":[{"s":"NFC und Bluetooth sind Technologien für den Nahbereich.","v":true},{"s":"DECT wird als „Schnurlostelefon“ bezeichnet.","v":true},{"s":"Tetra ist eine öffentliche Mobilfunkgeneration wie LTE.","v":false},{"s":"5G mm wave arbeitet im Bereich von 24,2 bis 25,7 GHz.","v":true}],"ref":"T1 S.112-114"},
+{"id":"m12q7","k":"num","lvl":2,"pts":2,"q":"Welche Wellenlänge hat 5G bei 3 GHz in Zentimetern? (c = 300.000 km/s)","num":10,"tol":0.05,"unit":"cm","steps":["λ = 300.000.000 m/s ÷ 3.000.000.000 Hz = 0,1 m","= **10 cm**"],"ref":"T1 S.114"},
+{"id":"m12q8","k":"mc","lvl":3,"pts":2,"q":"Eine Technik wechselt von 900 MHz auf 3,6 GHz. Was gilt für die Wellenlänge?","o":["Sie wird viermal kürzer.","Sie wird viermal länger.","Sie bleibt gleich.","Sie wird doppelt so lang."],"a":[0],"e":"λ = c / f: Die Frequenz vervierfacht sich, also viertelt sich die Wellenlänge.","ref":"T1 S.114"}]}

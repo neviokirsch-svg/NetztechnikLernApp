@@ -1,0 +1,12 @@
+# Skripte des Dozenten: nicht öffentlich weitergeben
+NetztechnikLernApp/Resources/PDF/*.pdf
+
+# Xcode
+xcuserdata/
+DerivedData/
+build/
+*.xcuserstate
+
+# System
+.DS_Store
+Thumbs.db

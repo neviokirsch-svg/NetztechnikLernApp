@@ -1,0 +1,22 @@
+{"id":"m04","part":1,"order":4,"title":"Digitale Netze im Automobil – Überblick","pages":"S. 23–27","icon":"car.fill","goal":"Du kennst die Netzarten rund ums Fahrzeug, die Motivation für Bussysteme und kannst die Fahrzeugbusse nach Geschwindigkeit und Kosten einordnen.",
+"sections":[
+{"id":"m04s1","title":"Drei Arten von Netzen","blocks":[
+{"t":"net","title":"Netze rund ums Auto","nodes":[{"id":"C","l":"Fahrzeug","x":0.5,"y":0.5,"s":"car"},{"id":"I","l":"Infrastruktur (V2I)","x":0,"y":0,"s":"antenna"},{"id":"V","l":"Fahrzeug (V2V)","x":1,"y":0,"s":"car"},{"id":"P","l":"Fußgänger (V2P)","x":0,"y":1,"s":"phone"},{"id":"K","l":"Cloud (V2C)","x":1,"y":1,"s":"cloud"}],"edges":[{"a":"C","b":"I"},{"a":"C","b":"V"},{"a":"C","b":"P"},{"a":"C","b":"K"}],"steps":[
+{"x":"**Netze im Fahrzeug:** Steuerung und Entertainment, kabelgebundenes LAN mit speziellen Protokollen.","hn":["C"]},
+{"x":"**V2x – Konnektivität mit der Umgebung:** WLAN, Mobilfunk (z. B. 5G).","hn":["I","V","P"],"p":[{"a":"C","b":"I"},{"a":"C","b":"V"},{"a":"C","b":"P"}]},
+{"x":"**Connected Vehicle:** Verbindung mit zentralen Diensten über Mobilfunk.","hn":["K"],"p":[{"a":"C","b":"K"}]}]}]},
+{"id":"m04s2","title":"Motivation","blocks":[
+{"t":"b","i":["**Kostenersparnis:** Bussysteme reduzieren die Kabelmenge. Neue Features einfach als Software oder mit günstiger Hardware (Sensoren).","**Reduktion des Kraftstoffverbrauchs**","**Sicherheit:** Assistenzsysteme (Abstandsradar, Spurhaltesysteme), Kollisionserkennung, „Break-by-Wire“","**Infotainment**","**Diagnose und Wartung**","**Autonomes Fahren**"]},
+{"t":"sl","part":1,"page":26,"x":"CAN, LIN, FlexRay, MOST und Ethernet im Fahrzeug"}]},
+{"id":"m04s3","title":"Geschwindigkeit und Kosten","blocks":[
+{"t":"bars","title":"Geschwindigkeit (Mbit/s)","unit":"Werte aus dem Kostenvergleich. Die Kosten steigen in derselben Reihenfolge.","bars":[{"l":"LIN","v":0.02,"c":"green"},{"l":"FT CAN","v":0.125,"c":"teal"},{"l":"HS CAN","v":1,"c":"teal"},{"l":"FlexRay","v":10,"c":"blue"},{"l":"Ethernet","v":100,"c":"violet"},{"l":"MOST","v":150,"c":"orange"}]},
+{"t":"tb","title":"Relative Kosten pro Steuergerät","head":["System","Geschwindigkeit","Relative Kosten"],"rows":[["LIN","20 kbit/s","0,5"],["FT CAN","125 kbit/s","1"],["HS CAN","1 Mbit/s","1"],["FlexRay","10 Mbit/s","2"],["Ethernet","25–100 Mbit/s","zwischen 2 und 4–5"],["MOST","100–150 Mbit/s","4–5"]]},
+{"t":"sl","part":1,"page":27,"x":"Kostenvergleich auf der Originalfolie"}]}],
+"questions":[
+{"id":"m04q1","k":"match","lvl":1,"pts":4,"q":"Ordnen Sie die V2x-Abkürzungen zu.","pairs":[["V2I","Infrastructure"],["V2V","Vehicle"],["V2P","Pedestrian"],["V2C","Cloud"]],"ref":"T1 S.24"},
+{"id":"m04q2","k":"ord","lvl":2,"pts":3,"q":"Sortieren Sie die Systeme nach steigender Geschwindigkeit.","seq":["LIN","FT CAN","HS CAN","FlexRay","MOST"],"ref":"T1 S.27"},
+{"id":"m04q3","k":"ms","lvl":2,"pts":3,"q":"Welche Motive nennt das Skript für digitale Netze im Automobil?","o":["Kostenersparnis durch weniger Kabel","Sicherheit durch Assistenzsysteme","Diagnose und Wartung","Höheres Fahrzeuggewicht"],"a":[0,1,2],"ref":"T1 S.25"},
+{"id":"m04q4","k":"mc","lvl":1,"pts":1,"q":"Welches System hat im Kostenvergleich die niedrigsten relativen Kosten pro Steuergerät?","o":["LIN","HS CAN","FlexRay","Ethernet"],"a":[0],"ref":"T1 S.27"},
+{"id":"m04q5","k":"open","lvl":2,"pts":3,"q":"Erläutern Sie, wie Bussysteme im Fahrzeug Kosten sparen.","model":["Einführung von Bussystemen reduziert die Menge der Kabel","Neue Features lassen sich einfach als reine Softwarelösung implementieren","oder unter Einbeziehung günstiger Hardwareteile wie Sensoren"],"ref":"T1 S.25"},
+{"id":"m04q6","k":"mc","lvl":2,"pts":2,"q":"Über welche Technik wird ein „Connected Vehicle“ laut Skript mit zentralen Diensten verbunden?","o":["Mobilfunk","LIN","FlexRay","CAN"],"a":[0],"ref":"T1 S.24"},
+{"id":"m04q7","k":"tf","lvl":2,"pts":3,"q":"Bewerten Sie die Aussagen.","st":[{"s":"Netze im Fahrzeug werden als kabelgebundenes LAN mit speziellen Protokollen umgesetzt.","v":true},{"s":"V2x nutzt laut Skript WLAN und Mobilfunk.","v":true},{"s":"FlexRay ist im Kostenvergleich günstiger als LIN.","v":false}],"ref":"T1 S.24"}]}

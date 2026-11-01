@@ -1,0 +1,52 @@
+{"id":"m14","part":2,"order":14,"title":"HTTP","pages":"S. 3–17","icon":"globe","goal":"Du kennst Aufbau und Ablauf von HTTP, rechnest RTTs für verschiedene Verbindungsarten und kennst Cookies, Proxys, HTTPS und neuere Versionen.",
+"sections":[
+{"id":"m14s1","title":"Grundlagen","blocks":[
+{"t":"p","x":"HTTP ersetzte Anfang der 1990er altmodische Dateiübertragungen und ist eine Mischung aus Visualisierung und Datenübertragung. Es basiert auf einem **Client/Server Application Design**. Versionen: 1996 HTTP 1.0, 1999 HTTP 1.1, ab 2015 HTTP 2.0 und 3.0."},
+{"t":"b","i":["Eine Webseite besteht aus **Objekten** (HTML-Datei, JPEG-Bild, Java-Applet, Audiodatei, …).","Typisch ist eine **HTML-Basisdatei** mit mehreren Verweisen.","Jedes Objekt ist über eine **URL** adressierbar.","HTTP ist **zustandslos**: Es werden keine Informationen über frühere Anfragen gespeichert."]},
+{"t":"seq","title":"Eine Webseite laden","lifelines":["Browser (Client)","Webserver dhbw.de"],"msgs":[
+{"f":0,"to":1,"l":"TCP Verbindung aufbauen","n":"Zuerst wird eine TCP-Verbindung aufgebaut.","c":"gray"},
+{"f":0,"to":1,"l":"GET start.html HTTP/1.1","n":"**HTTP Request** nach der Basisdatei.","c":"blue"},
+{"f":1,"to":0,"l":"HTTP/1.1 200 OK (text/html)","n":"**HTTP Response**: Daten werden im Browser angezeigt. Die Datei verweist auf weitere Objekte.","c":"green"},
+{"f":0,"to":1,"l":"GET logo.jpg HTTP/1.1","n":"Bei non-persistent HTTP wird dafür die TCP-Verbindung ab- und wieder aufgebaut.","c":"blue"},
+{"f":1,"to":0,"l":"HTTP/1.1 200 OK (image/jpg)","c":"green"},
+{"f":0,"to":1,"l":"TCP Verbindung abbauen","c":"gray"}]}]},
+{"id":"m14s2","title":"Nachrichten","blocks":[
+{"t":"tb","head":["Teil","Request","Response"],"rows":[["Erste Zeile","Request-Zeile","Status-Zeile"],["Danach","Header-Zeilen (name: value)","Header-Zeilen (name: value)"],["Ende","cr/lf zeigt Ende an","cr/lf, danach Daten"],["Beispiele","GET, POST, DELETE","200 OK, 404 not found, 505 HTTP Version Not Supported"]]},
+{"t":"k","x":"HTTP Message Header sind in **ASCII** codiert, also als Text lesbar. **CR/LF** kommt von der Schreibmaschine: Carriage Return (Wagen) und Line Feed (Rolle)."},
+{"t":"sl","part":2,"page":9,"x":"Aufbau der Nachrichten"}]},
+{"id":"m14s3","title":"Verbindungsarten","blocks":[
+{"t":"tb","head":["Art","Merkmal","Aufwand"],"rows":[["Non-persistent","nur ein Objekt pro TCP-Verbindung (HTTP/1.0)","2 RTT pro Objekt"],["Persistent ohne Pipelining","neue Anfrage erst nach der vorherigen Antwort","1 RTT je referenziertem Objekt"],["Persistent mit Pipelining","Anfragen, sobald ein Objekt gefunden wird (Default in HTTP/1.1)","im besten Fall 1 RTT für alle referenzierten Objekte"]]},
+{"t":"x","viz":"httprtt"},
+{"t":"sl","part":2,"page":12,"x":"Mit und ohne Pipelining"},
+{"t":"k","x":"**RTT** = Round Trip Time. 1 RTT geht für den TCP-Aufbau (3-way handshake) drauf, 1 RTT für Request/Response, dazu kommt die Datenübertragung. Browser öffnen oft parallele Verbindungen, teilweise mehrere Hundert."}]},
+{"id":"m14s4","title":"Autorisierung, HTTPS und Cookies","blocks":[
+{"t":"p","x":"**Autorisierung:** Da HTTP zustandslos ist, muss der Client bei **jeder** Anfrage die Autorisierung vorlegen (Header-Zeile). Fehlt sie, schickt der Server eine „Authenticate“-Header-Zeile zurück."},
+{"t":"frame","title":"HTTPS: TLS liegt zwischen HTTP und TCP","frames":[
+{"segs":[{"t":"HTTP","w":1,"c":"green"}]},
+{"segs":[{"t":"TLS","w":1,"c":"orange","d":"Zusätzliche Schicht. Der Server authentifiziert sich mit einem **Zertifikat**, zur Verschlüsselung wird ein gemeinsamer **symmetrischer Schlüssel** generiert. Aktuell Version 1.2 (2008) oder 1.3 (2018). Vorgänger war SSL."}]},
+{"segs":[{"t":"TCP (Port 443)","w":1,"c":"teal"}]}]},
+{"t":"seq","title":"Cookies merken sich den Zustand","lifelines":["Client","Server"],"msgs":[
+{"f":0,"to":1,"l":"GET /seite","n":"Erste Anfrage, das Protokoll selbst ist zustandslos.","c":"blue"},
+{"f":1,"to":0,"l":"200 OK, Set-cookie: Name, Ablaufzeit","n":"Der Server sendet eine **Set-cookie** Header-Zeile.","c":"green"},
+{"f":0,"to":0,"l":"lokal als Textdatei speichern","n":"Cookies werden als einfache **Textdateien** vom Client lokal gespeichert.","c":"gray"},
+{"f":0,"to":1,"l":"GET /seite + Cookie","n":"Kehrt der Benutzer zur gleichen URL zurück, sendet der Client das Cookie mit, wenn es noch nicht abgelaufen ist.","c":"blue"}]}]},
+{"id":"m14s5","title":"Proxys und neue Versionen","blocks":[
+{"t":"net","title":"Forward und Reverse Proxy","nodes":[{"id":"C1","l":"Client","x":0,"y":0.1,"s":"laptop"},{"id":"C2","l":"Client","x":0,"y":0.9,"s":"laptop"},{"id":"F","l":"Forward Proxy","x":0.3,"y":0.5,"s":"proxy"},{"id":"I","l":"Internet","x":0.55,"y":0.5,"s":"cloud"},{"id":"R","l":"Reverse Proxy","x":0.78,"y":0.5,"s":"proxy"},{"id":"S","l":"Server","x":1,"y":0.5,"s":"server"}],"edges":[{"a":"C1","b":"F"},{"a":"C2","b":"F"},{"a":"F","b":"I"},{"a":"I","b":"R"},{"a":"R","b":"S"}],"steps":[
+{"x":"Ein **Proxy** vermittelt zwischen Client und Server: Er nimmt Anfragen entgegen, leitet sie weiter und gibt Antworten auf gleichem Weg zurück. Einsatz in Firewalls, für Caches oder zur Anonymisierung.","p":[{"a":"F","b":"I"}]},
+{"x":"**Forward Proxy:** bündelt die Anfragen mehrerer Clients und schirmt die **Clients** von der Außenwelt ab.","hn":["F","C1","C2"],"p":[{"a":"C1","b":"F"},{"a":"C2","b":"F"}]},
+{"x":"**Reverse Proxy:** bündelt die Anfragen an einen Server und schirmt den **Server** von der Außenwelt ab.","hn":["R","S"],"p":[{"a":"I","b":"R"},{"a":"R","b":"S"}]}]},
+{"t":"tb","head":["","HTTP/2 (Mai 2015)","HTTP/3 (November 2018)"],"rows":[["Fokus","Geschwindigkeit und Effizienz","weitere Geschwindigkeitsvorteile"],["Format","binär statt textuell, Header-Komprimierung","QUIC (Quick UDP Internet Connections)"],["Besonderheit","Multiplexing über eine TCP-Verbindung, Priorisierung, Server Push","insgesamt verschlüsselt"]]}]}],
+"calcs":["calc.http"],
+"questions":[
+{"id":"m14q1","k":"num","lvl":2,"pts":3,"q":"Eine Webseite besteht aus einer HTML-Datei und 4 Bildern. Wie viele RTTs braucht non-persistent HTTP?","num":10,"tol":0.01,"unit":"RTT","steps":["5 Objekte (1 + 4)","2 RTT pro Objekt","2 · 5 = **10 RTT**"],"ref":"T2 S.11"},
+{"id":"m14q2","k":"num","lvl":2,"pts":3,"q":"Wie viele RTTs braucht dieselbe Webseite (HTML + 4 Bilder) mit persistent HTTP ohne Pipelining?","num":6,"tol":0.01,"unit":"RTT","steps":["1 RTT TCP-Aufbau + 1 RTT HTML-Datei","4 RTT für die Bilder","= **6 RTT**"],"ref":"T2 S.12"},
+{"id":"m14q3","k":"num","lvl":2,"pts":3,"q":"Wie viele RTTs braucht dieselbe Webseite (HTML + 4 Bilder) mit Pipelining im besten Fall?","num":3,"tol":0.01,"unit":"RTT","steps":["1 RTT TCP-Aufbau + 1 RTT HTML-Datei","1 RTT für alle Bilder","= **3 RTT**"],"ref":"T2 S.12"},
+{"id":"m14q4","k":"tf","lvl":2,"pts":5,"q":"Bewerten Sie die Aussagen zu HTTP.","st":[{"s":"HTTP ist zustandslos.","v":true},{"s":"HTTP Message Header sind binär codiert.","v":false},{"s":"HTTPS verwendet Port 443.","v":true},{"s":"HTTP/3 verwendet QUIC.","v":true},{"s":"Server Push funktioniert ganz ohne bestehende Verbindung.","v":false}],"ref":"T2 S.7-17"},
+{"id":"m14q5","k":"open","lvl":2,"pts":4,"q":"HTTP ist zustandslos. Wie schaffen Cookies trotzdem einen Bezug zwischen Anfragen?","model":["Server sendet eine Set-cookie Header-Zeile mit Namen, Ablaufzeit und weiteren Informationen","Client speichert Cookies als einfache Textdateien lokal","Bei Rückkehr zur gleichen URL sendet der Client das Cookie zurück","Voraussetzung: Das Cookie ist noch nicht abgelaufen"],"ref":"T2 S.15"},
+{"id":"m14q6","k":"match","lvl":1,"pts":3,"q":"Ordnen Sie die Statusmeldung zu.","pairs":[["200","OK"],["404","not found"],["505","HTTP Version Not Supported"]],"ref":"T2 S.9"},
+{"id":"m14q7","k":"mc","lvl":2,"pts":2,"q":"Wo liegt TLS im Protokollstapel?","o":["Als zusätzliche Schicht zwischen HTTP und TCP","Zwischen IP und Ethernet","Oberhalb von HTTP","Innerhalb der MAC-Schicht"],"a":[0],"ref":"T2 S.14"},
+{"id":"m14q8","k":"open","lvl":2,"pts":3,"q":"Unterscheiden Sie Forward Proxy und Reverse Proxy.","model":["Beide vermitteln zwischen Client und Server","Forward Proxy bündelt Anfragen mehrerer Clients und schirmt die Clients ab","Reverse Proxy bündelt Anfragen an einen Server und schirmt den Server ab"],"ref":"T2 S.16"},
+{"id":"m14q9","k":"ms","lvl":2,"pts":3,"q":"Welche Merkmale gehören zu HTTP/2?","o":["Header-Komprimierung","Multiplexing über eine TCP-Verbindung","Priorisierung einzelner Requests","Verwendung von QUIC"],"a":[0,1,2],"e":"QUIC gehört zu HTTP/3.","ref":"T2 S.17"},
+{"id":"m14q10","k":"mc","lvl":2,"pts":2,"q":"Wie authentifiziert sich der Server bei TLS gegenüber dem Client?","o":["Mit einem Zertifikat","Mit einem Cookie","Mit einer MAC-Adresse","Mit dem Passwort des Benutzers"],"a":[0],"ref":"T2 S.14"},
+{"id":"m14q11","k":"mc","lvl":3,"pts":2,"q":"Warum muss der Client bei HTTP-Autorisierung die Daten bei jeder Anfrage vorlegen?","o":["Weil das Protokoll zustandslos ist","Weil TCP keine Passwörter überträgt","Weil Cookies verboten sind","Weil der Server nur POST versteht"],"a":[0],"ref":"T2 S.13"},
+{"id":"m14q12","k":"num","lvl":3,"pts":3,"q":"Die RTT beträgt 40 ms. Wie lange (in ms) dauert das Laden von HTML + 9 Objekten mit non-persistent HTTP ohne Übertragungszeit?","num":800,"tol":0.1,"unit":"ms","steps":["10 Objekte · 2 RTT = 20 RTT","20 · 40 ms = **800 ms**"],"ref":"T2 S.11"}]}

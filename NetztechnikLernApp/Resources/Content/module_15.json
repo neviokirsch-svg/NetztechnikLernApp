@@ -1,0 +1,56 @@
+{"id":"m15","part":2,"order":15,"title":"Voice over Packet Data","pages":"S. 18–27","icon":"phone.fill","goal":"Du kennst die VoIP-Protokolle, die H.323-Bausteine, die SIP-Komponenten und kannst einen SIP-Anruf Schritt für Schritt erklären.",
+"sections":[
+{"id":"m15s1","title":"Protokolle und öffentliche Netze","blocks":[
+{"t":"frame","title":"Protokolle in VoIP (vereinfacht)","frames":[
+{"l":"Application: Administration der Verbindungen / Übertragung von Sprache und Video","segs":[{"t":"H.323 (Sig)","w":1,"c":"violet","d":"Administration der Verbindungen."},{"t":"SIP","w":1,"c":"violet","d":"Administration der Verbindungen."},{"t":"RTP","w":1,"c":"orange","d":"Übertragung von Sprache und Video."},{"t":"RTCP","w":1,"c":"orange","d":"Überwachung der Übertragung."}]},
+{"l":"Transport","segs":[{"t":"TCP","w":1,"c":"teal"},{"t":"UDP","w":1,"c":"teal"}]},
+{"l":"Internet","segs":[{"t":"IP","w":1,"c":"blue"}]}]},
+{"t":"net","title":"VoIP in öffentlichen Netzen","nodes":[{"id":"N","l":"IP-Netzwerk","x":0.5,"y":0.5,"s":"cloud"},{"id":"M","l":"Media Server","x":0.5,"y":0,"s":"server"},{"id":"G1","l":"Gateway","x":0.9,"y":0.2,"s":"router"},{"id":"P","l":"PSTN","x":1,"y":0.75,"s":"phone"},{"id":"C","l":"Call Server","x":0.65,"y":1,"s":"server"},{"id":"G2","l":"Gateway","x":0.15,"y":0.8,"s":"router"},{"id":"F","l":"Mobilfunk","x":0,"y":0.2,"s":"antenna"}],"edges":[{"a":"N","b":"M"},{"a":"N","b":"G1"},{"a":"G1","b":"P"},{"a":"N","b":"C"},{"a":"N","b":"G2"},{"a":"G2","b":"F"}],"steps":[
+{"x":"**Media Server:** Abspielen von Ansagen, Verbindung mehrerer Medienströme in einer Konferenz, Voicemail, Dekodierung von DTMF, Spracherkennung, Text zu Sprache.","hn":["M"]},
+{"x":"**Gateways** verbinden das IP-Netz mit dem **PSTN** (Plain Old Telephony Network) und dem **Mobilfunknetz**.","hn":["G1","G2"],"p":[{"a":"N","b":"G1"},{"a":"N","b":"G2"}]},
+{"x":"Der **Call Server** arbeitet mit **SIP** oder **H.323**.","hn":["C"],"p":[{"a":"C","b":"N","l":"Signalisierung"}]}]}]},
+{"id":"m15s2","title":"H.323","blocks":[
+{"t":"p","x":"H.323 ist ein **ITU-T Standard** und ein „Umbrella“-Standard, also ein Dach über vielen Einzelstandards."},
+{"t":"frame","title":"Tippe auf die Bereiche","frames":[
+{"l":"Media (über UDP)","segs":[{"t":"Audio Codec","w":1,"c":"violet","d":"G.711, G.723, G.729 – über RTP."},{"t":"Video Codec","w":1,"c":"violet","d":"H.261, H.263 – über RTP."},{"t":"RTCP","w":1,"c":"green","d":"Kontrollprotokoll."}]},
+{"l":"Data/Fax (über TCP)","segs":[{"t":"T.120","w":1,"c":"blue"},{"t":"T.38","w":1,"c":"blue"}]},
+{"l":"Call Control and Signaling","segs":[{"t":"H.225 Q.931 (TCP)","w":1,"c":"orange"},{"t":"H.225 RAS (UDP)","w":1,"c":"orange"},{"t":"H.245 (TCP)","w":1,"c":"orange"}]}]},
+{"t":"tb","title":"Netzwerkelemente","head":["Element","Aufgabe"],"rows":[["Endgerät","H.225 Anrufsteuerung, H.245 Kontrollkanal, RTP/RTCP, Audio- und Video-Codecs"],["Gatekeeper","Adressübersetzung, Zugangskontrolle, Bandbreitenkontrolle"],["Gateway","Übergang in andere Netze"],["Multipoint Control Unit","Konferenzen mit drei oder mehr Endpunkten"]]},
+{"t":"sl","part":2,"page":23,"x":"Codec = Codierer/Decodierer"}]},
+{"id":"m15s3","title":"SIP: Adressen und Nachrichten","blocks":[
+{"t":"p","x":"SIP (Session Initiation Protocol) ist **textbasiert wie HTTP** mit zwei Nachrichtentypen: Requests und Responses. Die erste Zeile eines Requests enthält Methode und SIP-Zieladresse, die erste Zeile einer Antwort einen Antwortcode."},
+{"t":"f","x":"sip:hans.schmidt@dhbw.de","title":"Weitere Beispiele: sip:hans.schmidt@10.1.1.1 und sip:8972212345@dhbw.de"},
+{"t":"p","x":"Um eine SIP-Adresse in eine Netzwerkadresse zu übersetzen, werden **DNS** und der SIP **Location Server** verwendet. Weitere Komponenten: User Agent, Proxy Server, Redirect Server, Registrar Server, Gateway."},
+{"t":"frame","title":"Aufbau einer SIP-Nachricht","frames":[
+{"segs":[{"t":"Request-/Status-Zeile","w":1,"c":"orange","d":"Methoden: REGISTER, INVITE, ACK, CANCEL, BYE, OPTIONS. Beispiel: INVITE sip:watson@boston.bell-tel.com SIP/2.0"}]},
+{"segs":[{"t":"Header","w":1,"c":"blue","d":"Via, From, To, Call-ID, CSeq, Contact, Subject, Content-Type, Content-Length."}]},
+{"segs":[{"t":"Leerzeile","w":1,"c":"gray","d":"Trennt Header und Body."}]},
+{"segs":[{"t":"Body","w":1,"c":"green","d":"v = Protocol version, o = Owner/creator und Session ID, s = Session name, t = Time, c = Connection information, m = Media information, a = Attribute."}]}]}]},
+{"id":"m15s4","title":"Ein SIP-Anruf im Proxy Mode","blocks":[
+{"t":"seq","title":"Von der Registrierung bis zum Auflegen","lifelines":["Anrufer (A)","Proxy","Registrar","Empfänger (B)"],"msgs":[
+{"f":3,"to":2,"l":"1) REGISTER","n":"B registriert sich beim Registrar Server.","c":"blue"},
+{"f":2,"to":3,"l":"2) 200 OK","c":"green"},
+{"f":0,"to":1,"l":"3) INVITE","n":"A ruft an und sendet INVITE an den Proxy.","c":"blue"},
+{"f":1,"to":0,"l":"4) 100 TRYING","c":"green"},
+{"f":1,"to":2,"l":"5) lookup","n":"Der Proxy schlägt beim Registrar nach, wo B erreichbar ist.","c":"gray"},
+{"f":1,"to":3,"l":"6) INVITE","c":"blue"},
+{"f":3,"to":1,"l":"7) 180 RINGING","n":"Bei B klingelt es.","c":"green"},
+{"f":1,"to":0,"l":"8) 180 RINGING","c":"green"},
+{"f":3,"to":1,"l":"9) 200 OK","n":"B nimmt ab.","c":"green"},
+{"f":1,"to":0,"l":"10) 200 OK","c":"green"},
+{"f":0,"to":3,"l":"11) ACK","n":"A bestätigt direkt an B.","c":"blue"},
+{"f":0,"to":3,"l":"12) Daten/Video (RTP)","n":"**Die Medien laufen direkt** zwischen A und B, nicht über den Proxy.","c":"red"},
+{"f":0,"to":3,"l":"13) BYE","n":"Auflegen.","c":"blue"},
+{"f":3,"to":0,"l":"14) 200 OK","c":"green"}]}]}],
+"questions":[
+{"id":"m15q1","k":"ord","lvl":2,"pts":4,"q":"Bringen Sie den SIP-Anruf in die richtige Reihenfolge.","seq":["REGISTER von B beim Registrar","INVITE von A an den Proxy","Lookup zwischen Proxy und Registrar","INVITE vom Proxy an B","180 RINGING","200 OK","ACK","Daten/Video über RTP","BYE"],"ref":"T2 S.27"},
+{"id":"m15q2","k":"match","lvl":2,"pts":4,"q":"Ordnen Sie die H.323-Elemente ihrer Aufgabe zu.","pairs":[["Gatekeeper","Adressübersetzung, Zugangskontrolle"],["Multipoint Control Unit","Konferenzen mit drei oder mehr Endpunkten"],["Gateway","Übergang in andere Netze"],["Endgerät","H.225, H.245, RTP/RTCP und Codecs"]],"ref":"T2 S.23"},
+{"id":"m15q3","k":"tf","lvl":2,"pts":4,"q":"Bewerten Sie die Aussagen zu SIP.","st":[{"s":"SIP ist ein textbasiertes Protokoll wie HTTP.","v":true},{"s":"Im Proxy Mode laufen auch die RTP-Daten über den Proxy.","v":false},{"s":"Zur Adressübersetzung werden DNS und der Location Server verwendet.","v":true},{"s":"BYE baut die Verbindung ab.","v":true}],"ref":"T2 S.24-27"},
+{"id":"m15q4","k":"mc","lvl":1,"pts":1,"q":"Wer standardisiert H.323?","o":["ITU-T","IETF","W3C","3GPP"],"a":[0],"ref":"T2 S.22"},
+{"id":"m15q5","k":"open","lvl":2,"pts":3,"q":"Nennen Sie drei Aufgaben eines Media Servers.","model":["Abspielen von Ansagen oder Voicemail","Verbindung mehrerer Medienströme in einer Konferenz","Dekodierung von DTMF, Spracherkennung oder Text zu Sprache"],"ref":"T2 S.20"},
+{"id":"m15q6","k":"mc","lvl":2,"pts":2,"q":"Welche Antwort signalisiert im SIP-Ablauf, dass es beim Empfänger klingelt?","o":["180 RINGING","100 TRYING","200 OK","INVITE"],"a":[0],"ref":"T2 S.27"},
+{"id":"m15q7","k":"match","lvl":2,"pts":3,"q":"Ordnen Sie die Felder des SIP-Bodys zu.","pairs":[["m","Media information"],["c","Connection information"],["s","Session name"]],"ref":"T2 S.26"},
+{"id":"m15q8","k":"mc","lvl":2,"pts":2,"q":"Welche Transportprotokolle nutzt H.323 für Audio und Video?","o":["RTP über UDP","HTTP über TCP","SIP über TCP","Q.931 über TCP"],"a":[0],"ref":"T2 S.22"},
+{"id":"m15q9","k":"open","lvl":3,"pts":3,"q":"Warum ist es sinnvoll, dass nach dem Verbindungsaufbau die Medien direkt zwischen A und B laufen und die Signalisierung über Proxy und Registrar?","model":["Signalisierung (SIP) dient der Administration der Verbindungen","Proxy und Registrar werden gebraucht, um den Empfänger zu finden","Die Mediendaten (RTP) laufen danach direkt zwischen den Endpunkten, im Skript Schritt 12"],"ref":"T2 S.27"},
+{"id":"m15q10","k":"ms","lvl":1,"pts":3,"q":"Welche Komponenten gehören laut Skript zum SIP-Netz?","o":["Registrar Server","Redirect Server","Location Server","Gatekeeper"],"a":[0,1,2],"e":"Der Gatekeeper gehört zu H.323.","ref":"T2 S.25"},
+{"id":"m15q11","k":"mc","lvl":1,"pts":1,"q":"Wofür steht DTMF?","o":["Dual Tone Multi-Frequency","Digital Transmission Media Frame","Data Terminal Multi Function","Dynamic Traffic Management Format"],"a":[0],"ref":"T2 S.20"}]}

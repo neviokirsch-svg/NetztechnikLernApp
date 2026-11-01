@@ -1,0 +1,49 @@
+{"id":"m08","part":1,"order":8,"title":"Internet Layer: IPv4 und IPv6","pages":"S. 44–54","icon":"network","goal":"Du kennst die Felder von IPv4- und IPv6-Header, ihre Unterschiede und die Migrationsszenarien.",
+"sections":[
+{"id":"m08s1","title":"Der TCP/IP-Protokollstapel","blocks":[
+{"t":"frame","title":"Vom Dienst bis zur Leitung","frames":[
+{"l":"Application","segs":[{"t":"TELNET","w":1,"c":"green","d":"Remote Login"},{"t":"FTP","w":1,"c":"green","d":"File Transfer"},{"t":"HTTP","w":1,"c":"green","d":"WWW"},{"t":"SMTP","w":1,"c":"green","d":"E-Mail"},{"t":"RTP","w":1,"c":"orange","d":"Voice"},{"t":"NTP","w":1,"c":"orange","d":"Time"},{"t":"DNS","w":1,"c":"orange","d":"Name Service"}]},
+{"l":"Transport","segs":[{"t":"TCP","w":4,"c":"teal","d":"Transportprotokoll für die grünen Dienste im Bild."},{"t":"UDP","w":3,"c":"teal","d":"Transportprotokoll für die orangen Dienste im Bild."}]},
+{"l":"Internet / Networking","segs":[{"t":"IP","w":1,"c":"blue","d":"Das eine gemeinsame Protokoll in der Mitte."}]},
+{"l":"Link / Network Access","segs":[{"t":"MAC, PPP, HDLC, ATM, …","w":1,"c":"violet","d":"Viele Link-Protokolle, darunter LLC/SNAP, X.25, AAL-5, GFP und LAN-PHY, SDH, ISDN, V.24, V.35."}]}]},
+{"t":"sl","part":1,"page":46,"x":"Vollständiger Protokollstapel"}]},
+{"id":"m08s2","title":"IPv4-Header","blocks":[
+{"t":"frame","title":"32-Bit-Struktur: Tippe auf die Felder","frames":[
+{"segs":[{"t":"Version","w":4,"c":"yellow","d":"IP-Version."},{"t":"Hdr Len","w":4,"c":"red","d":"Header Length."},{"t":"Type of Service","w":8,"c":"blue","d":"Precedence, Quality."},{"t":"Total Length","w":16,"c":"blue","d":"In Bytes, max. 64 kByte."}]},
+{"segs":[{"t":"Identification","w":16,"c":"red","d":"Wird benutzt, um Fragmente zusammenzusetzen."},{"t":"Flags","w":3,"c":"red","d":"0, DF, MF."},{"t":"Fragment Offset","w":13,"c":"red","d":"Sehr selten benutzt (<1 %)."}]},
+{"segs":[{"t":"Time to Live","w":8,"c":"blue","d":"Verhindert Schleifen (prevent loops)."},{"t":"Protocol","w":8,"c":"blue","d":"Protokoll der höheren Schicht."},{"t":"Header Checksum","w":16,"c":"red","d":"Prüfsumme des Headers."}]},
+{"segs":[{"t":"Source Address","w":32,"c":"yellow","d":"32 Bit."}]},
+{"segs":[{"t":"Destination Address","w":32,"c":"yellow","d":"32 Bit."}]},
+{"segs":[{"t":"Options","w":24,"c":"red","d":"Z. B. Security, Strict Routing, Record Route, Stream ID, Time Stamp."},{"t":"Padding","w":8,"c":"red","d":"Auffüllen."}]}]},
+{"t":"k","x":"Ohne Options hat der IPv4-Header 5 Zeilen à 32 Bit, also **20 Bytes**."}]},
+{"id":"m08s3","title":"IPv6: Motivation und Header","blocks":[
+{"t":"p","x":"IPv4 wurde **1981** entwickelt und war nie für die Leistung des heutigen Internets gedacht. Es hat Unzulänglichkeiten bei Sicherheit, Mobilität und Qualität, die heute zusätzliche Protokolle beheben. **1991** begann die Arbeit an Version 6. Einer der Hauptgründe war die früh absehbare **Adressknappheit**."},
+{"t":"frame","title":"IPv6-Header: Tippe auf die Felder","frames":[
+{"segs":[{"t":"Version","w":4,"c":"yellow","d":"Name aus IPv4 übernommen."},{"t":"Traffic Class","w":8,"c":"blue","d":"Entspricht TOS in IPv4."},{"t":"Flow Label","w":20,"c":"teal","d":"Neu: Identifikation von Paketflüssen, z. B. für Echtzeit-Anwendungen."}]},
+{"segs":[{"t":"Payload Length","w":16,"c":"blue","d":"In Bytes wie bei v4. Ausnahme: 4GB Jumbograms."},{"t":"Next Header","w":8,"c":"blue","d":"Typ des Extension Headers oder Protokoll der höheren Schicht."},{"t":"Hop Limit","w":8,"c":"blue","d":"Verhindert Schleifen."}]},
+{"segs":[{"t":"Source Address (128 Bit)","w":32,"c":"yellow"}]},
+{"segs":[{"t":"Destination Address (128 Bit)","w":32,"c":"yellow"}]}]},
+{"t":"tb","title":"Legende: Was passiert von IPv4 zu IPv6?","head":["Farbe","Bedeutung","Felder"],"rows":[["Gelb","Name bleibt","Version, Source, Destination Address"],["Rot","in IPv6 nicht mehr vorhanden","IHL, Identification, Flags, Fragment Offset, Header Checksum, Options, Padding"],["Blau","Name und Position geändert","Type of Service, Total Length, Time to Live, Protocol"],["Blaugrün","neu in IPv6","Flow Label"]]},
+{"t":"sl","part":1,"page":52,"x":"Direkter Vergleich auf der Folie"},
+{"t":"k","x":"Der IPv6-Header hat 2 Zeilen à 32 Bit plus 2 Adressen à 128 Bit: 8 + 32 = **40 Bytes**."},
+{"t":"sl","part":1,"page":50,"x":"Entwicklung der IPv6-Nutzung (Quelle: Google)"}]},
+{"id":"m08s4","title":"Zusammenspiel und Fazit","blocks":[
+{"t":"net","title":"Drei Szenarien für IPv4 und IPv6","nodes":[{"id":"H1","l":"Host","x":0,"y":0.5,"s":"host"},{"id":"N1","l":"Netz 1","x":0.25,"y":0.5,"s":"cloud"},{"id":"G1","l":"Übergang","x":0.5,"y":0.1,"s":"router"},{"id":"N2","l":"Netz 2","x":0.75,"y":0.5,"s":"cloud"},{"id":"H2","l":"Server","x":1,"y":0.5,"s":"server"}],"edges":[{"a":"H1","b":"N1"},{"a":"N1","b":"G1"},{"a":"G1","b":"N2"},{"a":"N2","b":"H2"}],"steps":[
+{"x":"**1.** Kommunikation zwischen Hosts in **verschiedenen Protokolldomänen**, z. B. Netz 1 = IPv4 und Netz 2 = IPv6.","hn":["G1"],"p":[{"a":"N1","b":"G1"}]},
+{"x":"**2.** Kommunikation zwischen **IPv6-Hosts über ein IPv4-Netz**: IPv6 → IPv4 → IPv6 mit zwei Übergängen.","hn":["N1","N2"]},
+{"x":"**3.** Kommunikation zwischen **IPv4-Hosts über ein IPv6-Netz**: IPv4 → IPv6 → IPv4.","hn":["G1"]}]},
+{"t":"p","x":"**Fazit:** IPv6 ist nicht die beste Lösung für ein neues Protokoll, allein reicht es nicht, und es braucht eine lange Übergangszeit mit „Migrationsszenarien“. Eingeführt wird es trotzdem wegen der erwarteten Adressknappheit."},
+{"t":"b","i":["**Mobile** (3G und folgende) wegen der „always-on“ Eigenschaft","**Asiatisch-pazifischer Raum** wegen weniger registrierter IPv4-Adressen","**Internet der Dinge (IoT)** mit Milliarden neuer Geräte"]}]}],
+"calcs":["calc.overhead"],
+"questions":[
+{"id":"m08q1","k":"match","lvl":2,"pts":4,"q":"Ordnen Sie dem IPv4-Feld das entsprechende IPv6-Feld zu.","pairs":[["Type of Service","Traffic Class"],["Time to Live","Hop Limit"],["Protocol","Next Header"],["Total Length","Payload Length"]],"ref":"T1 S.51"},
+{"id":"m08q2","k":"ms","lvl":2,"pts":3,"q":"Welche IPv4-Felder gibt es im IPv6-Header nicht mehr?","o":["Header Checksum","Fragment Offset","Identification","Version"],"a":[0,1,2],"e":"Das Feld Version bleibt erhalten.","ref":"T1 S.52"},
+{"id":"m08q3","k":"num","lvl":2,"pts":2,"q":"Wie viele Bytes umfasst der IPv6-Basis-Header?","num":40,"tol":0.01,"unit":"Bytes","steps":["2 Zeilen à 32 Bit = 8 Bytes","Quell- und Zieladresse: 2 · 128 Bit = 32 Bytes","8 + 32 = **40 Bytes**"],"ref":"T1 S.51"},
+{"id":"m08q4","k":"num","lvl":2,"pts":2,"q":"Wie viele Bytes hat ein IPv4-Header ohne Options?","num":20,"tol":0.01,"unit":"Bytes","steps":["5 Zeilen à 32 Bit = 160 Bit","160 / 8 = **20 Bytes**"],"ref":"T1 S.48"},
+{"id":"m08q5","k":"mc","lvl":1,"pts":1,"q":"Welches Feld ist in IPv6 neu hinzugekommen?","o":["Flow Label","Hop Limit","Options","Header Checksum"],"a":[0],"ref":"T1 S.52"},
+{"id":"m08q6","k":"mc","lvl":1,"pts":1,"q":"Wozu dient Time to Live?","o":["Es verhindert Schleifen.","Es zählt die Fragmente.","Es gibt die Priorität an.","Es enthält die Prüfsumme."],"a":[0],"ref":"T1 S.48"},
+{"id":"m08q7","k":"open","lvl":3,"pts":4,"q":"Nennen Sie die Treiber für die Einführung von IPv6 und begründen Sie, warum sie jeweils relevant sind.","model":["Mobile (3G und folgende) wegen der always-on Eigenschaft","Asiatisch-pazifischer Raum wegen der wenigen dort registrierten IPv4-Adressen","Internet der Dinge mit Milliarden von neuen Geräten","Gemeinsamer Hintergrund: zu erwartende Adressknappheit"],"ref":"T1 S.54"},
+{"id":"m08q8","k":"tf","lvl":2,"pts":4,"q":"Bewerten Sie die Aussagen.","st":[{"s":"IPv4 wurde 1981 entwickelt.","v":true},{"s":"Fragment Offset wird laut Skript sehr selten benutzt (<1 %).","v":true},{"s":"IPv6 allein reicht aus, es werden keine weiteren Protokolle benötigt.","v":false},{"s":"Für IPv6 ist eine lange Übergangszeit mit Migrationsszenarien nötig.","v":true}],"ref":"T1 S.48-54"},
+{"id":"m08q9","k":"open","lvl":2,"pts":3,"q":"Beschreiben Sie die drei Szenarien des Zusammenspiels von IPv4 und IPv6.","model":["Kommunikation zwischen Hosts in verschiedenen Protokolldomänen","Kommunikation zwischen IPv6-Hosts über ein IPv4-Netzwerk","Kommunikation zwischen IPv4-Hosts über ein IPv6-Netzwerk"],"ref":"T1 S.53"},
+{"id":"m08q10","k":"num","lvl":3,"pts":3,"q":"Ein UDP-Datagramm (8 Bytes Header) mit 192 Bytes Nutzdaten wird in IPv6 transportiert. Wie viele Bytes hat das gesamte IP-Paket?","num":240,"tol":0.01,"unit":"Bytes","steps":["Nutzdaten 192 + UDP 8 + IPv6 40","= **240 Bytes**"],"ref":"T1 S.107"},
+{"id":"m08q11","k":"mc","lvl":2,"pts":2,"q":"Was gibt das Feld „Protocol“ im IPv4-Header an?","o":["Das Protokoll der höheren Schicht","Die IP-Version","Die Art der Fragmentierung","Das Link-Protokoll"],"a":[0],"ref":"T1 S.48"}]}

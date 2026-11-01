@@ -1,0 +1,88 @@
+{"id":"m11","part":1,"order":11,"title":"Transport Layer: TCP und UDP","pages":"S. 86–108","icon":"arrow.left.arrow.right","goal":"Du beherrschst Sockets, Handshake, Sequenznummern, Timeout-Berechnung, Fluss- und Staukontrolle und kannst begründen, wann UDP die bessere Wahl ist.",
+"sections":[
+{"id":"m11s1","title":"Sockets","blocks":[
+{"t":"p","x":"IP transportiert entweder **TCP** (verbindungsorientiert) oder **UDP** (verbindungslos). Das Tupel aus IP-Adresse und Port-Nummer heißt **Socket**. Die Anwendungen werden in das Socket „eingesteckt“."},
+{"t":"tb","title":"Beispiel aus dem Skript","head":["","IP-Adresse","Port"],"rows":[["Ziel (Server)","192.168.70.30","23"],["Quelle (Client)","67.204.13.6","4711"]]},
+{"t":"frame","title":"Kapselung bei TCP und UDP","frames":[
+{"l":"TCP","segs":[{"t":"IP Header","w":2,"c":"blue"},{"t":"TCP Header","w":2,"c":"teal"},{"t":"Nutzdaten","w":5,"c":"green"}]},
+{"l":"UDP","segs":[{"t":"IP Header","w":2,"c":"blue"},{"t":"UDP Header","w":1,"c":"orange"},{"t":"Nutzdaten","w":6,"c":"green"}]}]}]},
+{"id":"m11s2","title":"TCP: Merkmale und Header","blocks":[
+{"t":"p","x":"TCP bietet eine **zuverlässige Ende-zu-Ende-Verbindung**, die IP allein nicht unterstützen kann."},
+{"t":"b","i":["Verbindungsverwaltung (Aufbau, Abbau)","Übertragung von Datenströmen","Zuverlässige Datenübertragung","Flusskontrolle und Überlastungskontrolle","Voll-Duplex"]},
+{"t":"frame","title":"TCP-Header: Tippe auf die Felder","frames":[
+{"segs":[{"t":"Source Port","w":16,"c":"blue","d":"Port des Senders."},{"t":"Destination Port","w":16,"c":"blue","d":"Port des Empfängers."}]},
+{"segs":[{"t":"Sequence Number","w":32,"c":"teal","d":"TCP nutzt **Bytes** als Sequenznummern, nicht Pakete."}]},
+{"segs":[{"t":"Acknowledge Number","w":32,"c":"teal","d":"Bestätigung empfangener Daten."}]},
+{"segs":[{"t":"Offset","w":4,"c":"gray","d":"Data Offset."},{"t":"Res.","w":6,"c":"gray","d":"Reserviert."},{"t":"URG ACK PSH RST SYN FIN","w":6,"c":"orange","d":"Flags, z. B. SYN und FIN für Auf- und Abbau."},{"t":"Window Size","w":16,"c":"green","d":"Wie viele Bytes der Sender übertragen darf – freier Platz im Empfängerpuffer."}]},
+{"segs":[{"t":"Checksum","w":16,"c":"gray","d":"Prüfsumme."},{"t":"Urgent Pointer","w":16,"c":"gray","d":"Zeiger auf dringende Daten."}]},
+{"segs":[{"t":"Options","w":24,"c":"violet","d":"Hier wird z. B. die MSS vereinbart."},{"t":"Padding","w":8,"c":"violet","d":"Auffüllen."}]}]},
+{"t":"k","x":"Ohne Options hat der TCP-Header 5 Zeilen à 32 Bit, also **20 Bytes**."}]},
+{"id":"m11s3","title":"Verbindungsaufbau und -abbau","blocks":[
+{"t":"seq","title":"Three-Way Handshake und Abbau","lifelines":["Client (Active Opener)","Server (Passive Opener)"],"msgs":[
+{"f":0,"to":1,"l":"SYN, Seq = ISN(c)","n":"**Connection Set-Up:** Der Client startet mit seiner Initial Sequence Number.","c":"blue"},
+{"f":1,"to":0,"l":"SYN+ACK, Seq = ISN(s), ACK = ISN(c)+1","n":"Der Server bestätigt und sendet seine eigene ISN.","c":"green"},
+{"f":0,"to":1,"l":"ACK, Seq = ISN(c)+1, ACK = ISN(s)+1","n":"Der Client bestätigt. **Die Verbindung steht (Established).**","c":"blue"},
+{"f":0,"to":1,"l":"FIN+ACK, Seq = K, ACK = L","n":"**Connection Close (Modified Three-Way Handshake):** Der Client leitet den Abbau ein.","c":"red"},
+{"f":1,"to":0,"l":"ACK, Seq = L, ACK = K+1","n":"Der Server bestätigt das FIN.","c":"orange"},
+{"f":1,"to":0,"l":"FIN+ACK, Seq = L, ACK = K+1","n":"Der Server schließt seine Richtung ebenfalls.","c":"red"},
+{"f":0,"to":1,"l":"ACK, Seq = K, ACK = L+1","n":"Der Client bestätigt. Die Verbindung ist abgebaut.","c":"orange"}]},
+{"t":"p","x":"**Halbseitiger Abbau:** Nach „ACK, Seq = L, ACK = K+1“ ist die Verbindung **half-closed**. Der Server kann noch Daten senden, die der Client bestätigt. Erst danach schließt der Server mit FIN die andere Hälfte."},
+{"t":"sl","part":1,"page":95,"x":"Halbseitiger Verbindungsabbau"}]},
+{"id":"m11s4","title":"Sequenznummern in Aktion","blocks":[
+{"t":"seq","title":"Beispielhafte Verbindung (Folie S. 96)","lifelines":["End System A","End System B"],"msgs":[
+{"f":0,"to":1,"l":"SYN, SEQ=875","n":"Verbindungsaufbau: Sequenznummern werden ausgetauscht.","c":"blue"},
+{"f":1,"to":0,"l":"SYN, ACK, SEQ=156, ACK=876","c":"green"},
+{"f":0,"to":1,"l":"SYN, ACK, SEQ=876, ACK=157","c":"blue"},
+{"f":0,"to":1,"l":"ACK, SEQ=876, ACK=157 (16 Bytes)","n":"A sendet 16 Bytes Daten.","c":"blue"},
+{"f":1,"to":0,"l":"ACK, SEQ=157, ACK=893 (100 Bytes)","n":"B bestätigt und sendet 100 Bytes. TCP nutzt Bytes als Sequenznummern.","c":"green"},
+{"f":0,"to":1,"l":"ACK, SEQ=893, ACK=258","c":"blue"},
+{"f":1,"to":0,"l":"ACK, FIN, SEQ=258, ACK=894","n":"Verbindungsabbau beginnt.","c":"red"},
+{"f":0,"to":1,"l":"ACK, FIN, SEQ=894, ACK=259","c":"red"},
+{"f":1,"to":0,"l":"ACK, SEQ=259, ACK=895","c":"orange"}]},
+{"t":"k","x":"**Achtung, zwei Zählweisen im Skript:** Auf S. 96–97 gilt ACK = SEQ + Bytes **+ 1** (876 + 16 + 1 = 893). In den Beispielen auf S. 98 und S. 102 gilt ACK = SEQ + Bytes (SEQ=0 mit 2K → ACK=2048). Die Rechenaufgaben der App verwenden die Variante von S. 102 und nennen das in der Aufgabe."},
+{"t":"p","x":"**Bestätigung mehrerer Pakete:** TCP muss nicht jedes Paket einzeln bestätigen. Im Beispiel von S. 97 werden 1000 Bytes in vier Segmenten übertragen und die Bestätigung gilt nur für das letzte Byte. Dabei sind **Window Size** und **Timeout** zu beachten."}]},
+{"id":"m11s5","title":"Timeout und RTT","blocks":[
+{"t":"p","x":"Bleibt ein Paket für eine gewisse Zeit unbestätigt, geht TCP von einem Verlust aus und sendet es erneut. Anhand der **Round Trip Time (RTT)** schätzt TCP, wie lange es warten sollte. Beispiel: Senden bei 0,9 s, ACK bei 2,2 s, also RTT = 1,3 s."},
+{"t":"f","x":"SRTT = α · SRTT + (1 − α) · RTT","title":"α typischerweise 0,875 (7/8) – Glättung wegen Verzögerungsschwankungen"},
+{"t":"f","x":"Timeout = β · SRTT","title":"β > 1 ermöglicht eine gewisse Variation der Umlaufzeiten"},
+{"t":"x","viz":"srtt"},
+{"t":"k","x":"**Back-off:** Bei jedem Timeout wird der Wert der Zeitüberschreitung verdoppelt."},
+{"t":"p","x":"**Problem:** Wird ein Paket wiederholt, ist unklar, zu welchem Sendeversuch das ACK gehört. **Karn's Algorithmus** bezieht deshalb nur RTT-Messungen von **nicht-wiederholten Paketen** ein."},
+{"t":"sl","part":1,"page":100,"x":"Uneindeutigkeit bei der RTT-Messung"}]},
+{"id":"m11s6","title":"Flusskontrolle","blocks":[
+{"t":"p","x":"Die **Flusskontrolle** stellt sicher, dass der Sender den Puffer des Empfängers nicht überfüllt. Das Feld **Window Size** zeigt den noch verfügbaren Platz im Empfängerpuffer an."},
+{"t":"x","viz":"flow"},
+{"t":"k","x":"**Sliding Window:** Es darf mehr Daten „unterwegs“ geben, als gerade Platz für unverarbeitete Daten im Puffer ist – in der Erwartung, dass beim Eintreffen wieder genug Platz da ist. Ziel: bessere Nutzung der Kapazitäten und schnellere Übertragung."},
+{"t":"sl","part":1,"page":103,"x":"Sliding Window auf der Originalfolie"}]},
+{"id":"m11s7","title":"Staukontrolle","blocks":[
+{"t":"tb","head":["","Flusskontrolle","Staukontrolle"],"rows":[["Verwaltet von","Empfänger (Empfangspuffer)","Sender"],["Schützt vor","Überlauf des Empfangspuffers","Netzüberlastung"],["Größe","Window Size","Congestion Window (CWND)"]]},
+{"t":"p","x":"Das **CWND** begrenzt die Gesamtmenge unbestätigter Daten und ist typischerweise ein Vielfaches der **MSS** (Maximum Segment Size). Die MSS ist die maximale Nutzdatenmenge eines TCP-Segments und wird in den Options des Headers vereinbart."},
+{"t":"x","viz":"cwnd"},
+{"t":"tb","head":["Phase","Was passiert"],"rows":[["Slow Start","CWND startet bei 1 MSS, jedes ACK verdoppelt, exponentiell bis zum Schwellwert"],["Congestion Avoidance","ab dem Schwellwert linear, bis eine Zeitüberschreitung eintritt"],["Congestion Detection","Erkennung durch Timeout: Schwellwert halbieren, wieder mit Slow Start beginnen"]]},
+{"t":"sl","part":1,"page":106,"x":"Der Verlauf aus dem Skript"},
+{"t":"k","x":"Das Skript beschreibt den grundsätzlichen Mechanismus mit beispielhaften Werten. In der Realität gibt es viele Variationen."}]},
+{"id":"m11s8","title":"UDP","blocks":[
+{"t":"p","x":"Das **User Datagram Protocol** ist eine schlanke Erweiterung von IP: „**Fire and Forget**“. Der Protokollkopf ist durch eine Prüfsumme geschützt."},
+{"t":"frame","title":"UDP-Header (8 Bytes)","frames":[
+{"segs":[{"t":"Source Port","w":16,"c":"blue"},{"t":"Destination Port","w":16,"c":"blue"}]},
+{"segs":[{"t":"Length","w":16,"c":"teal"},{"t":"UDP Checksum","w":16,"c":"teal"}]}]},
+{"t":"tb","head":["UDP sinnvoll","UDP nicht sinnvoll"],"rows":[["Anwendungen in Echtzeit","wenn Flusskontrolle notwendig ist"],["periodische Übertragung (Routing-Daten)","wenn Datenverluste nicht tolerierbar sind"],["unkritische Übertragungen","Beispiel: File Transfer"],["wenn die Anwendung auf Zuverlässigkeit achtet",""],["Multicast/Broadcast, Medienströme",""]]}]}],
+"calcs":["calc.srtt","calc.timeout","calc.slowstart","calc.congestion","calc.ack","calc.window"],
+"questions":[
+{"id":"m11q1","k":"ord","lvl":1,"pts":3,"q":"Bringen Sie den Three-Way Handshake in die richtige Reihenfolge.","seq":["Client sendet SYN mit Seq = ISN(c)","Server sendet SYN+ACK mit Seq = ISN(s), ACK = ISN(c)+1","Client sendet ACK mit ACK = ISN(s)+1"],"ref":"T1 S.94"},
+{"id":"m11q2","k":"num","lvl":2,"pts":3,"q":"SRTT = 200 ms, gemessene RTT = 280 ms, α = 0,875. Berechnen Sie die neue SRTT.","num":210,"tol":0.05,"unit":"ms","steps":["SRTT = 0,875 · 200 + 0,125 · 280","= 175 + 35 = **210 ms**"],"ref":"T1 S.99"},
+{"id":"m11q3","k":"num","lvl":2,"pts":3,"q":"SRTT = 150 ms, β = 2. Es treten zwei Timeouts in Folge auf. Wie groß ist der Timeout-Wert danach?","num":1200,"tol":0.1,"unit":"ms","steps":["Timeout = 2 · 150 = 300 ms","Back-off verdoppelt je Timeout: 300 · 2 · 2 = **1200 ms**"],"ref":"T1 S.99"},
+{"id":"m11q4","k":"num","lvl":3,"pts":4,"q":"Eine neue Verbindung startet mit CWND = 1 MSS, Schwellwert 16 MSS. Wie groß ist das CWND nach 6 ACKs gemäß Skript?","num":18,"tol":0.01,"unit":"MSS","steps":["Verlauf: 1 → 2 → 4 → 8 → 16 → 17 → 18","Bis 16 verdoppeln (Slow Start), dann linear (Stauvermeidung)","CWND = **18 MSS**"],"ref":"T1 S.105"},
+{"id":"m11q5","k":"num","lvl":2,"pts":2,"q":"Empfangspuffer 4096 Bytes, davon 3072 Bytes unverarbeitet. Welche Window Size meldet der Empfänger?","num":1024,"tol":0.01,"unit":"Bytes","steps":["WIN = 4096 − 3072 = **1024 Bytes**"],"ref":"T1 S.102"},
+{"id":"m11q6","k":"num","lvl":1,"pts":2,"q":"Ein Paket wird bei t = 0,9 s gesendet, das ACK kommt bei t = 2,2 s. Wie groß ist die RTT?","num":1.3,"tol":0.01,"unit":"s","steps":["RTT = 2,2 s − 0,9 s = **1,3 s**"],"ref":"T1 S.98"},
+{"id":"m11q7","k":"open","lvl":2,"pts":4,"q":"Grenzen Sie Fluss- und Staukontrolle voneinander ab.","model":["Flusskontrolle wird vom Empfänger über den Empfangspuffer verwaltet","Sie stellt sicher, dass der Sender den Puffer nicht überfüllt (Window Size)","Staukontrolle liegt auf der Seite des Senders","Sie begrenzt bei Netzüberlastung die Übertragungsrate über das CWND"],"ref":"T1 S.101-104"},
+{"id":"m11q8","k":"open","lvl":3,"pts":4,"q":"Erklären Sie das Problem bei der RTT-Messung nach einer Wiederholung und wie Karn's Algorithmus es löst.","model":["Nach einem Sender-Timeout wird das Paket wiederholt","Das ACK lässt sich nicht eindeutig dem ursprünglichen oder dem letzten Paket zuordnen","Karn's Algorithmus bezieht nur RTT-Messungen von nicht-wiederholten Paketen ein"],"ref":"T1 S.100"},
+{"id":"m11q9","k":"ms","lvl":2,"pts":3,"q":"In welchen Fällen ist UDP laut Skript geeignet?","o":["Anwendungen in Echtzeit","Multicast-/Broadcast-Anwendungen","Medienströme","File Transfer"],"a":[0,1,2],"ref":"T1 S.108"},
+{"id":"m11q10","k":"tf","lvl":2,"pts":5,"q":"Bewerten Sie die Aussagen zu TCP.","st":[{"s":"TCP nutzt Bytes als Sequenznummern.","v":true},{"s":"TCP ist Voll-Duplex.","v":true},{"s":"Die MSS wird im Feld Window Size übertragen.","v":false},{"s":"Ein TCP-Segment kann ggf. in mehrere IP-Pakete fragmentiert werden.","v":true},{"s":"Das CWND wird vom Empfänger gehalten.","v":false}],"ref":"T1 S.92-104"},
+{"id":"m11q11","k":"mc","lvl":1,"pts":1,"q":"Wie heißt das Tupel aus IP-Adresse und Port-Nummer?","o":["Socket","Frame","Segment","Hop"],"a":[0],"ref":"T1 S.90"},
+{"id":"m11q12","k":"mc","lvl":2,"pts":2,"q":"Was passiert bei der Erkennung von Überlastung durch einen Timeout?","o":["Der Schwellwert wird halbiert und es beginnt wieder Slow Start.","Der Schwellwert wird verdoppelt.","Die Verbindung wird abgebaut.","Das CWND wächst linear weiter."],"a":[0],"ref":"T1 S.105"},
+{"id":"m11q13","k":"mc","lvl":2,"pts":2,"q":"Im Flusskontroll-Beispiel meldet der Empfänger ACK = 4096, WIN = 0. Was bedeutet das?","o":["Der Puffer ist voll, der Sender ist blockiert.","Die Verbindung ist beendet.","Der Sender darf 4096 Bytes senden.","4096 Bytes gingen verloren."],"a":[0],"ref":"T1 S.102"},
+{"id":"m11q14","k":"open","lvl":3,"pts":4,"q":"Sie entwickeln eine Live-Sprachübertragung und eine Software-Update-Funktion. Wählen Sie jeweils das Transportprotokoll und begründen Sie.","model":["Sprache: UDP, weil Echtzeit-Anwendung und Medienstrom","Update: TCP, weil Datenverluste nicht tolerierbar sind und Flusskontrolle sinnvoll ist","Laut Skript ist File Transfer das Beispiel gegen UDP und Medienströme das Beispiel dafür"],"ref":"T1 S.108"},
+{"id":"m11q15","k":"num","lvl":2,"pts":2,"q":"Ein Sender schickt ein Segment mit SEQ = 2048 und 2048 Bytes Nutzdaten. Welche ACK-Nummer folgt im Flusskontroll-Beispiel von S. 102?","num":4096,"tol":0.01,"steps":["ACK = SEQ + Bytes = 2048 + 2048 = **4096**"],"ref":"T1 S.102"},
+{"id":"m11q16","k":"num","lvl":2,"pts":2,"q":"Wie viele Bytes hat ein UDP-Header?","num":8,"tol":0.01,"unit":"Bytes","steps":["2 Zeilen à 32 Bit = 64 Bit","64 / 8 = **8 Bytes**"],"ref":"T1 S.107"},
+{"id":"m11q17","k":"mc","lvl":2,"pts":2,"q":"Was ist das Ziel des Sliding Window?","o":["Bessere Nutzung der Kapazitäten und damit eine Beschleunigung der Übertragung","Verschlüsselung der Daten","Reduzierung der Header-Größe","Vermeidung von Schleifen"],"a":[0],"ref":"T1 S.103"}]}
