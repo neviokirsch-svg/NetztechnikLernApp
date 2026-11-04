@@ -14,6 +14,7 @@ struct LearningModule: Codable, Identifiable, Hashable {
     let sections: [LessonSection]
     let questions: [Question]
     let calcs: [String]?
+    var exams: [OriginalExam]?
 
     var calcIDs: [String] { calcs ?? [] }
     static func == (lhs: LearningModule, rhs: LearningModule) -> Bool { lhs.id == rhs.id }
@@ -122,6 +123,15 @@ struct BarItem: Codable {
 
 enum QuestionKind: String, Codable {
     case mc, ms, tf, num, ord, match, open
+}
+
+/// Eine Altklausur in ihrer Originalreihenfolge. Die Aufgaben stehen im selben Modul.
+struct OriginalExam: Codable, Identifiable {
+    let id: String
+    let title: String
+    let minutes: Int
+    var note: String?
+    let questions: [String]
 }
 
 struct TFStatement: Codable, Hashable {

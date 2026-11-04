@@ -18,8 +18,8 @@ struct ModuleListView: View {
                         }
                         .card()
                     }
-                    ForEach([1, 2], id: \.self) { part in
-                        Text("Skript Teil \(part)")
+                    ForEach([3, 1, 2], id: \.self) { part in
+                        Text(part == 3 ? "Klausurvorbereitung" : "Skript Teil \(part)")
                             .font(.title3.bold())
                             .padding(.top, 8)
                         ForEach(library.modules.filter { $0.part == part }) { module in
@@ -89,7 +89,7 @@ struct ModuleDetailView: View {
                     HStack(spacing: 12) {
                         GlassIcon(systemName: module.icon, color: Theme.partColor(module.part), size: 54)
                         VStack(alignment: .leading) {
-                            Text("Skript Teil \(module.part), \(module.pages)")
+                            Text(module.part == 3 ? module.pages : "Skript Teil \(module.part), \(module.pages)")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                             Text(module.title).font(.title3.bold())

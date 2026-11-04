@@ -243,38 +243,51 @@ struct ExamConfig: Identifiable {
 struct ExamHubView: View {
     @EnvironmentObject var library: ContentLibrary
     @EnvironmentObject var progress: ProgressStore
-    @State private var minutes = 60
+    @State private var minutes = 72
     @State private var partFilter = 0
     @State private var exam: ExamConfig?
 
+    /// Aufbau wie in den Altklausuren: etwa 1 Punkt pro Minute, je ein Sechstel Teil 1a und 1b,
+    /// je ein Drittel Wissen und Rechnen. Altklausur-Aufgaben kommen zuerst, Module füllen auf.
     private func buildExam() -> ExamConfig {
-        // Annahme bis zur Altklausur: etwa 1 Punkt pro Minute.
         let modules = library.modules.filter { partFilter == 0 || $0.part == partFilter }
-        var pool = modules.flatMap { $0.questions }.filter { $0.lvl >= 2 }.shuffled()
-        let calcIDs = Set(modules.flatMap { $0.calcIDs })
-        var calcs = CalcEngine.all.filter { calcIDs.contains($0.id) }.shuffled().map { $0.make() }
-        var picked: [Question] = []
-        var points = 0
-        var usedTopics: [String: Int] = [:]
-        while points < minutes && (!pool.isEmpty || !calcs.isEmpty) {
-            // Etwa jede dritte Aufgabe ist eine Rechenaufgabe.
-            let next: Question
-            if picked.count % 3 == 2, let c = calcs.popLast() {
-                next = c
-            } else if let q = pool.popLast() {
-                next = q
-            } else if let c = calcs.popLast() {
-                next = c
-            } else {
-                break
+        let all = modules.flatMap { $0.questions }
+        let old = all.filter { $0.src != nil }.shuffled()
+        let rest = all.filter { $0.src == nil && $0.lvl >= 2 }.shuffled()
+
+        func take(_ list: [Question], points: Int) -> [Question] {
+            var picked: [Question] = []
+            var sum = 0
+            for q in list where sum < points && !picked.contains(q) {
+                picked.append(q)
+                sum += q.pts
             }
-            let topic = String(next.id.prefix(3))
-            if usedTopics[topic, default: 0] >= 4 && !next.id.hasPrefix("calc.") && !pool.isEmpty { continue }
-            usedTopics[topic, default: 0] += 1
-            picked.append(next)
-            points += next.pts
+            return picked
         }
-        return ExamConfig(minutes: minutes, questions: picked)
+
+        let single: (Question) -> Bool = { $0.k == .mc && $0.pts == 1 }
+        let multiple: (Question) -> Bool = { $0.k == .ms && $0.pts <= 2 }
+        let part1a = take(old.filter(single) + all.filter { $0.src == nil && single($0) }.shuffled(), points: minutes / 6)
+        let part1b = take(old.filter(multiple) + rest.filter(multiple), points: minutes / 6)
+        // Die Themen, die in allen drei Altklausuren vorkamen, tragen ein "wa" in der Kennung.
+        let knowledge = old.filter { $0.k == .open }.sorted { $0.id.hasPrefix("m25wa") && !$1.id.hasPrefix("m25wa") }
+        let part2 = take(knowledge + rest.filter { $0.k == .open }, points: minutes / 3)
+
+        let oldTasks = old.filter { !single($0) && !multiple($0) && $0.k != .open }
+        let mustHave = [oldTasks.first { $0.id.hasPrefix("m25cp") }, oldTasks.first { $0.id.hasPrefix("m25cq") }].compactMap { $0 }
+        let calcIDs = Set(modules.flatMap { $0.calcIDs })
+        let generated = CalcEngine.all.filter { calcIDs.contains($0.id) }.shuffled().map { $0.make() }
+        let part3 = take(mustHave + Array(oldTasks.prefix(3)) + generated, points: minutes / 3)
+
+        return ExamConfig(minutes: minutes, questions: part1a + part1b + part2 + part3)
+    }
+
+    private var originalExams: [OriginalExam] {
+        library.modules.flatMap { $0.exams ?? [] }
+    }
+
+    private func config(for original: OriginalExam) -> ExamConfig {
+        ExamConfig(minutes: original.minutes, questions: original.questions.compactMap { library.question(id: $0)?.0 })
     }
 
     var body: some View {
@@ -282,13 +295,14 @@ struct ExamHubView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 14) {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Klausur simulieren").font(.title3.bold())
-                        Text("Mit Zeitlimit, ohne Hilfe und ohne Lösungen bis zur Abgabe. Fragen aus den Modulen und Rechenaufgaben werden gemischt.")
+                        Text("Neu gemischt").font(.title3.bold())
+                        Text("Aufbau wie in den Altklausuren: Multiple Choice, Wissensfragen und Rechenaufgaben, etwa 1 Punkt pro Minute. Mit Zeitlimit und ohne Lösungen bis zur Abgabe.")
                             .font(.callout)
                             .foregroundStyle(.secondary)
                         Picker("Dauer", selection: $minutes) {
                             Text("30 Min").tag(30)
                             Text("60 Min").tag(60)
+                            Text("72 Min").tag(72)
                             Text("90 Min").tag(90)
                         }
                         .pickerStyle(.segmented)
@@ -304,11 +318,33 @@ struct ExamHubView: View {
                             Label("Klausur starten", systemImage: "timer").mainAction()
                         }
                         .liquidButton()
-                        Text("Aufbau vorläufig nach Skript (ca. 1 Punkt pro Minute). Mit der Altklausur wird er angepasst.")
+                        Text("72 Minuten sind der Rest des 120-Minuten-Blocks nach Signale und Systeme. Das ist aus Moodle abgeleitet.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
                     .card()
+
+                    if !originalExams.isEmpty {
+                        Text("Originalklausuren").font(.headline)
+                        ForEach(originalExams) { original in
+                            Button {
+                                exam = config(for: original)
+                            } label: {
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(original.title).font(.subheadline.bold())
+                                        Text("\(original.minutes) Minuten" + (original.note.map { " · \($0)" } ?? ""))
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    Spacer()
+                                    Image(systemName: "chevron.right").foregroundStyle(.secondary)
+                                }
+                                .card(cornerRadius: 16)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
 
                     if !progress.data.exams.isEmpty {
                         Text("Bisherige Versuche").font(.headline)

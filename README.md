@@ -24,9 +24,9 @@ iOS-App (SwiftUI, Liquid Glass) zum Skript „Kommunikations- und Netztechnik“
 
 Neue Dateien im Ordner `NetztechnikLernApp` nimmt Xcode automatisch ins Projekt auf.
 
-## Inhalte erweitern (z. B. Altklausur)
+## Inhalte erweitern
 
-Eine neue Datei `Resources/Content/module_25_altklausur.json` anlegen. Sie wird beim Start automatisch geladen. Fragen können mit `"src":"altklausur"` markiert werden.
+Neue Dateien `Resources/Content/module_*.json` werden beim Start automatisch geladen. `module_25_altklausur.json` enthält die Aufgaben der Altklausuren (`src` nennt die Herkunft) und unter `exams` die Originalklausuren in ihrer Reihenfolge.
 
 Fragetypen (`k`): `mc`, `ms`, `tf`, `num`, `ord`, `match`, `open`.
 Blocktypen (`t`): `p`, `b`, `k`, `f`, `tb`, `sl`, `seq`, `net`, `frame`, `bars`, `x`.

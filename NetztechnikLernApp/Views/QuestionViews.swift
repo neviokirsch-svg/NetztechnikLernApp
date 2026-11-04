@@ -32,11 +32,11 @@ struct AnswerDraft {
             guard let correct = q.a?.first, let pick = selected.first else { return 0 }
             return pick == correct ? 1 : 0
         case .ms:
+            // Wie in der Klausur: alles richtig voll, ein Fehler halb, ab zwei Fehlern nichts.
             let correct = Set(q.a ?? [])
             guard !correct.isEmpty else { return 0 }
-            let hits = selected.intersection(correct).count
-            let misses = selected.subtracting(correct).count
-            return max(0, Double(hits - misses) / Double(correct.count))
+            let errors = selected.symmetricDifference(correct).count
+            return errors == 0 ? 1 : (errors == 1 ? 0.5 : 0)
         case .tf:
             let statements = q.st ?? []
             guard !statements.isEmpty else { return 0 }
@@ -89,6 +89,13 @@ struct QuestionHeader: View {
                 Text(kindName)
                     .font(.caption.bold())
                     .foregroundStyle(Theme.primary)
+                if let src = q.src {
+                    Text(src)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                }
                 Spacer()
                 HStack(spacing: 2) {
                     ForEach(0..<3, id: \.self) { i in
