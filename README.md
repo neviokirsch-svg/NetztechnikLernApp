@@ -8,7 +8,7 @@ iOS-App (SwiftUI, Liquid Glass) zum Skript „Kommunikations- und Netztechnik“
 2. Target *NetztechnikLernApp* → *Signing & Capabilities* → eigenes **Team** wählen. Falls die Bundle-ID belegt ist, eine eigene eintragen.
 3. iPhone auswählen und starten. Mindestversion ist iOS 17. Liquid Glass erscheint ab iOS 26, darunter gibt es eine Material-Optik.
 
-**Originalfolien:** Die Skripte sind nicht im Repository enthalten. Für die Folienansicht `skript_teil1.pdf` und `skript_teil2.pdf` nach `NetztechnikLernApp/Resources/PDF/` legen. Ohne sie läuft die App, zeigt aber keine Originalfolien.
+**Originalfolien:** Die Skripte (WS 2026/27) liegen als `skript_teil1.pdf` und `skript_teil2.pdf` in `NetztechnikLernApp/Resources/PDF`. Die Altklausuren liegen in `Unterlagen/Klausuren`.
 
 ## Aufbau
 
